@@ -230,3 +230,77 @@ footer img { width: 105px; }
   .public-staff-card { max-width: none; }
   .event-card { padding: 18px; }
 }
+
+/* Header / hero treatment based on supplied reference screenshot */
+.site-header{
+  min-height:70px;
+  padding:10px clamp(28px,3.2vw,58px);
+  background:rgba(3,4,10,.72);
+  border-bottom:1px solid rgba(255,20,147,.26);
+  backdrop-filter:blur(14px);
+}
+.brand img{width:150px;max-height:46px}
+.site-header nav{align-items:center;justify-content:center;gap:26px;font-size:12px;letter-spacing:.08em}
+.site-header nav a{position:relative;padding:17px 0;color:#f4edf8}
+.site-header nav a:first-child::after{content:"";position:absolute;left:0;right:0;bottom:7px;height:2px;background:var(--pink);box-shadow:0 0 12px rgba(255,20,147,.7)}
+.header-actions{gap:15px}
+.lang-button{color:#fff;font-size:12px;letter-spacing:.08em}
+.social-links{display:flex;align-items:center;gap:15px;font-size:20px}
+.social-links a{color:#f6f7fb;opacity:.9}
+.menu-mark{font-size:22px;line-height:1}
+.discord-button{padding:13px 22px;border-width:1px;background:transparent!important;color:#fff!important;box-shadow:0 0 20px rgba(255,20,147,.15);font-size:12px}
+.hero{
+  min-height:535px;
+  padding-top:70px;
+  background:
+    linear-gradient(90deg,rgba(3,4,10,.88) 0%,rgba(3,4,10,.54) 34%,rgba(3,4,10,.06) 66%,rgba(3,4,10,.30) 100%),
+    linear-gradient(0deg,rgba(3,4,10,.92) 0%,transparent 28%),
+    url('assets/character.png') 67% 48% / cover no-repeat;
+}
+.hero-overlay{
+  background:
+    radial-gradient(circle at 45% 32%,rgba(255,20,147,.20),transparent 33%),
+    linear-gradient(90deg,rgba(3,4,10,.18),transparent 65%);
+}
+.hero-content{
+  width:min(600px,48vw);
+  margin-left:clamp(6vw,10vw,160px);
+  padding-top:0;
+  text-align:center;
+}
+.hero-logo{
+  display:block;
+  width:min(520px,38vw);
+  max-height:220px;
+  object-fit:contain;
+  margin:20px auto 15px;
+  filter:drop-shadow(0 0 18px rgba(255,20,147,.28));
+}
+.hero-subtitle{font-size:13px;letter-spacing:.35em;margin:0 auto 24px}
+.hero-tags{justify-content:center;margin:20px 0;font-size:11px;letter-spacing:.28em}
+.hero-actions{justify-content:center}
+.location{right:4vw;bottom:27px;font-size:10px}
+.quick-links{gap:14px;padding:18px 4.3vw;background:rgba(3,4,10,.94);border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12)}
+.quick-links a{border:1px solid rgba(255,255,255,.16);padding:20px 22px;background:rgba(8,9,16,.78);display:grid;grid-template-columns:auto 1fr auto;column-gap:16px;align-items:center}
+.quick-links strong{font-size:26px;color:var(--pink);grid-row:span 2}
+.quick-links span{margin-top:0;font-size:14px}
+.quick-links small{font-size:10px}
+@media (max-width:1100px){
+  .site-header nav{gap:15px}
+  .social-links{display:none}
+  .hero-content{width:min(540px,52vw)}
+  .hero-logo{width:min(470px,44vw)}
+}
+@media (max-width:700px){
+  .site-header{min-height:62px;padding:9px 18px}
+  .brand img{width:115px}
+  .site-header nav{display:none}
+  .lang-button{font-size:10px}
+  .discord-button{padding:10px 12px;font-size:9px}
+  .hero{min-height:680px;background-position:62% center}
+  .hero-content{width:90vw;margin:0 auto;padding-top:35px}
+  .hero-logo{width:min(500px,86vw);max-height:180px}
+  .hero-subtitle{font-size:10px;letter-spacing:.2em}
+  .quick-links{grid-template-columns:1fr 1fr;padding:10px}
+  .quick-links a{padding:14px}
+}
