@@ -221,16 +221,31 @@ async function loadApplications(user) {
       select.appendChild(option);
     });
 
+    const roleInput = document.createElement("input");
+    roleInput.type = "text";
+    roleInput.placeholder = "Zugewiesene Staff-Rolle";
+    roleInput.value = application.desired_role || "";
+    roleInput.style.marginTop = "10px";
+    roleInput.style.width = "100%";
+    roleInput.style.boxSizing = "border-box";
+    roleInput.style.padding = "10px";
+    roleInput.style.borderRadius = "8px";
+    roleInput.style.background = "#111";
+    roleInput.style.color = "inherit";
+
     select.addEventListener("change", async () => {
-      const { error: updateError } = await supabaseClient
-        .from("staff_applications")
-        .update({ status: select.value, reviewed_by: user.id, reviewed_at: new Date().toISOString() })
-        .eq("id", application.id);
+      const { error: updateError } = await supabaseClient.rpc("admin_review_application", {
+        p_application_id: application.id,
+        p_new_status: select.value,
+        p_assigned_role: roleInput.value.trim() || application.desired_role
+      });
 
       adminMessage.textContent = updateError
         ? updateError.message
-        : "Status erfolgreich aktualisiert.";
+        : "Status aktualisiert. Bei Genehmigung wurde das Staff-Profil erstellt.";
     });
+
+    card.appendChild(roleInput);
 
     card.appendChild(select);
     applicationsList.appendChild(card);
