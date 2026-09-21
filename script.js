@@ -556,7 +556,8 @@ function makeRichEditor(textarea, initialValue = "") {
     button("↔", "justifyCenter"),
     button("→", "justifyRight"),
     button("• Liste", "insertUnorderedList"),
-    button("1. Liste", "insertOrderedList")
+    button("1. Liste", "insertOrderedList"),
+    button("🔗 Link", "createLink", prompt("Link-URL:") || "")
   );
   const size = document.createElement("select");
   size.innerHTML = '<option value="">Schriftgröße</option><option value="2">Klein</option><option value="3">Normal</option><option value="5">Groß</option><option value="7">Sehr groß</option>';
@@ -615,6 +616,24 @@ function renderDJs(lineup) {
   return `<div class="dj-slot-display">${slots.map(s => `<div class="dj-slot-item"><strong>Slot ${s.slot}</strong>${s.time ? ` · ${s.time}` : ""}${s.dj ? ` · ${s.link ? `<a href="${s.link.replace(/"/g,"&quot;")}" target="_blank" rel="noopener">${s.dj}</a>` : s.dj}` : ""}</div>`).join("")}</div>`;
 }
 
+
+function twitchChannelFromUrl(url) {
+  if (!url) return "";
+  try {
+    const u = new URL(url);
+    if (!u.hostname.includes("twitch.tv")) return "";
+    return u.pathname.split("/").filter(Boolean)[0] || "";
+  } catch { return ""; }
+}
+function renderLiveStream(lineup) {
+  const slots = parseDJs(lineup);
+  const live = slots.find(s => twitchChannelFromUrl(s.link));
+  if (!live) return "";
+  const channel = twitchChannelFromUrl(live.link);
+  const parent = window.location.hostname || "the-level-website.pages.dev";
+  return `<section class="live-stream-panel"><h3>🎥 DJ Stream</h3><p><strong>${live.dj || channel}</strong> · ${live.time || ""}</p><iframe src="https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&parent=${encodeURIComponent(parent)}&autoplay=false" allowfullscreen title="Twitch Stream"></iframe><p><a href="${live.link.replace(/"/g,"&quot;")}" target="_blank" rel="noopener">Auf Twitch öffnen</a></p></section>`;
+}
+
 /* Event management */
 const publicEventsList = document.getElementById("publicEventsList");
 const adminEventsArea = document.getElementById("adminEventsArea");
@@ -661,6 +680,12 @@ function buildPublicEventCard(event) {
     if (rendered) lineup.innerHTML = rendered;
     else lineup.textContent = `DJ-Lineup: ${event.lineup}`;
     card.appendChild(lineup);
+    const streamHtml = renderLiveStream(event.lineup);
+    if (streamHtml) {
+      const stream = document.createElement("div");
+      stream.innerHTML = streamHtml;
+      card.appendChild(stream);
+    }
   }
 
   return card;
