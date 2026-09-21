@@ -553,6 +553,7 @@ function buildPublicEventCard(event) {
 
   const description = document.createElement("p");
   description.textContent = event.description || "";
+  description.classList.add(event.description_align === "center" ? "description-align-center" : "description-align-left");
   card.appendChild(description);
 
   const location = document.createElement("p");
@@ -782,7 +783,7 @@ async function syncHomepageEventDetails() {
   setText("next-event-details-title", event.title);
   setText("nextEventDescription", event.event_time || "");
   setText("next-event-details-description", event.description || "Für dieses Event wurde noch keine Beschreibung hinterlegt.");
-  applyDescriptionAlignment(document.getElementById("nextEventDescription"), event.description_align);
+  
   applyDescriptionAlignment(document.getElementById("next-event-details-description"), event.description_align);
 
   const dateElement = document.getElementById("nextEventDate");
@@ -794,6 +795,10 @@ async function syncHomepageEventDetails() {
   const details = document.getElementById("eventDetails");
   if (details) {
     details.replaceChildren();
+    const detailsDescription = document.createElement("p");
+    detailsDescription.textContent = event.description || "Für dieses Event wurde noch keine Beschreibung hinterlegt.";
+    detailsDescription.classList.add(event.description_align === "center" ? "description-align-center" : "description-align-left");
+    details.appendChild(detailsDescription);
     [
       ["Datum", event.event_date],
       ["Zeit", event.event_time],
