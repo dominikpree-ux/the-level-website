@@ -373,3 +373,102 @@ supabaseClient.auth.getSession().then(({ data }) => {
 });
 
 loadPublicStaffProfiles();
+
+
+/* Admin staff profile management */
+const adminProfilesArea = document.getElementById("adminProfilesArea");
+const adminProfilesList = document.getElementById("adminProfilesList");
+
+async function loadAdminProfiles(user) {
+  if (!adminProfilesArea || !adminProfilesList || !isAdmin(user)) return;
+
+  adminProfilesArea.hidden = false;
+  adminProfilesList.replaceChildren();
+
+  const { data, error } = await supabaseClient
+    .from("staff_profiles")
+    .select("id, username, role, avatar_url, bio, discord_name, status")
+    .order("username", { ascending: true });
+
+  if (error) {
+    adminProfilesList.textContent = error.message;
+    return;
+  }
+
+  if (!data?.length) {
+    adminProfilesList.textContent = "Keine Staff-Profile vorhanden.";
+    return;
+  }
+
+  data.forEach((profile) => {
+    const card = document.createElement("article");
+    card.className = "admin-profile-card";
+
+    const title = document.createElement("h4");
+    title.textContent = profile.username || "Unbenanntes Profil";
+    card.appendChild(title);
+
+    const username = document.createElement("input");
+    username.placeholder = "Anzeigename";
+    username.value = profile.username || "";
+
+    const role = document.createElement("input");
+    role.placeholder = "Rolle";
+    role.value = profile.role || "";
+
+    const avatar = document.createElement("input");
+    avatar.placeholder = "Profilbild-URL";
+    avatar.value = profile.avatar_url || "";
+
+    const discord = document.createElement("input");
+    discord.placeholder = "Discord-Name";
+    discord.value = profile.discord_name || "";
+
+    const bio = document.createElement("textarea");
+    bio.placeholder = "Bio";
+    bio.value = profile.bio || "";
+
+    const status = document.createElement("select");
+    ["approved", "inactive", "pending"].forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      option.selected = profile.status === value;
+      status.appendChild(option);
+    });
+
+    const save = document.createElement("button");
+    save.type = "button";
+    save.className = "button primary";
+    save.textContent = "Profil aktualisieren";
+    save.addEventListener("click", async () => {
+      save.disabled = true;
+      const { error: updateError } = await supabaseClient
+        .from("staff_profiles")
+        .update({
+          username: username.value.trim(),
+          role: role.value.trim(),
+          avatar_url: avatar.value.trim(),
+          discord_name: discord.value.trim(),
+          bio: bio.value.trim(),
+          status: status.value
+        })
+        .eq("id", profile.id);
+
+      adminMessage.textContent = updateError
+        ? updateError.message
+        : "Staff-Profil erfolgreich aktualisiert.";
+      save.disabled = false;
+      await loadPublicStaffProfiles();
+    });
+
+    card.append(username, role, avatar, discord, bio, status, save);
+    adminProfilesList.appendChild(card);
+  });
+}
+
+const originalShowAdminArea = showAdminArea;
+showAdminArea = async function(user) {
+  await originalShowAdminArea(user);
+  if (isAdmin(user)) await loadAdminProfiles(user);
+};
