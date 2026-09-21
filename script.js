@@ -597,6 +597,24 @@ function renderRichDescription(target, value, align = "left") {
 
 makeRichEditor(document.getElementById("newEventDescription"));
 
+
+function readDJs(prefix="newEvent") {
+  return [1,2,3].map(i => ({
+    slot: i,
+    time: document.getElementById(`${prefix}Slot${i}Time`)?.value?.trim() || "",
+    dj: document.getElementById(`${prefix}Slot${i}DJ`)?.value?.trim() || "",
+    link: document.getElementById(`${prefix}Slot${i}Link`)?.value?.trim() || ""
+  })).filter(x => x.time || x.dj || x.link);
+}
+function parseDJs(lineup) {
+  try { const v = JSON.parse(lineup || ""); return Array.isArray(v) ? v : []; } catch { return []; }
+}
+function renderDJs(lineup) {
+  const slots = parseDJs(lineup);
+  if (!slots.length) return "";
+  return `<div class="dj-slot-display">${slots.map(s => `<div class="dj-slot-item"><strong>Slot ${s.slot}</strong>${s.time ? ` · ${s.time}` : ""}${s.dj ? ` · ${s.link ? `<a href="${s.link.replace(/"/g,"&quot;")}" target="_blank" rel="noopener">${s.dj}</a>` : s.dj}` : ""}</div>`).join("")}</div>`;
+}
+
 /* Event management */
 const publicEventsList = document.getElementById("publicEventsList");
 const adminEventsArea = document.getElementById("adminEventsArea");
@@ -638,8 +656,10 @@ function buildPublicEventCard(event) {
   card.appendChild(location);
 
   if (event.lineup) {
-    const lineup = document.createElement("p");
-    lineup.textContent = `DJ-Lineup: ${event.lineup}`;
+    const lineup = document.createElement("div");
+    const rendered = renderDJs(event.lineup);
+    if (rendered) lineup.innerHTML = rendered;
+    else lineup.textContent = `DJ-Lineup: ${event.lineup}`;
     card.appendChild(lineup);
   }
 
@@ -710,6 +730,10 @@ async function loadAdminEvents(user) {
     const theme = eventInput("Theme / Genre", event.theme);
     const location = eventInput("Location", event.location);
     const lineup = eventInput("DJ-Lineup", event.lineup);
+    const editDJs = document.createElement("div");
+    editDJs.className = "dj-slot-display";
+    editDJs.innerHTML = renderDJs(event.lineup) || "<span class='muted'>DJ-Slots werden über das neue Slot-Formular gepflegt.</span>";
+
     const image = eventInput("Banner-URL", event.image_url);
     const description = document.createElement("textarea");
     description.placeholder = "Beschreibung";
@@ -768,7 +792,7 @@ async function loadAdminEvents(user) {
       await loadPublicEvents();
     });
 
-    card.append(title, date, time, theme, location, lineup, image, description, descriptionAlign, status, save, remove);
+    card.append(title, date, time, theme, location, lineup, editDJs, image, description, descriptionAlign, status, save, remove);
     adminEventsList.appendChild(card);
   });
 }
@@ -786,7 +810,7 @@ createEventButton?.addEventListener("click", async () => {
     event_time: document.getElementById("newEventTime").value.trim(),
     theme: document.getElementById("newEventTheme").value.trim(),
     location: document.getElementById("newEventLocation").value.trim(),
-    lineup: document.getElementById("newEventLineup").value.trim(),
+    lineup: JSON.stringify(readDJs()),
     image_url: document.getElementById("newEventImage").value.trim(),
     description: document.getElementById("newEventDescription").value.trim(),
     description_align: document.getElementById("newEventDescriptionAlign")?.value || "left",
@@ -813,7 +837,7 @@ createEventButton?.addEventListener("click", async () => {
 
   message.textContent = error ? error.message : "Event erstellt.";
   if (!error) {
-    ["newEventTitle","newEventDate","newEventTime","newEventTheme","newEventLineup","newEventImage","newEventDescription"]
+    ["newEventTitle","newEventDate","newEventTime","newEventTheme","newEventLineup","newEventImage","newEventDescription","newEventSlot1Time","newEventSlot1DJ","newEventSlot1Link","newEventSlot2Time","newEventSlot2DJ","newEventSlot2Link","newEventSlot3Time","newEventSlot3DJ","newEventSlot3Link"]
       .forEach((id) => { document.getElementById(id).value = ""; });
     await loadAdminEvents(userData.user);
     await loadPublicEvents();
