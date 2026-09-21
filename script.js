@@ -721,8 +721,13 @@ async function loadAdminEvents(user) {
     card.className = "admin-event-card";
 
     const heading = document.createElement("h4");
-    heading.textContent = event.title || "Unbenanntes Event";
+    heading.textContent = `Event bearbeiten: ${event.title || "Unbenanntes Event"}`;
     card.appendChild(heading);
+
+    const editHint = document.createElement("p");
+    editHint.className = "muted";
+    editHint.textContent = "Felder ändern und anschließend „Speichern“ klicken.";
+    card.appendChild(editHint);
 
     const title = eventInput("Event-Titel", event.title);
     const date = eventInput("Datum", event.event_date, "date");
@@ -776,6 +781,7 @@ async function loadAdminEvents(user) {
 
       adminMessage.textContent = updateError ? updateError.message : "Event gespeichert.";
       save.disabled = false;
+      await loadAdminEvents(user);
       await loadPublicEvents();
     });
 
