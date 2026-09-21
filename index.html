@@ -53,7 +53,7 @@
 .rich-editor{min-height:150px;padding:12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(0,0,0,.18);color:inherit;outline:none;white-space:pre-wrap}
 .rich-editor img{max-width:100%;height:auto;border-radius:8px}
 .rich-editor:empty:before{content:attr(data-placeholder);opacity:.5}
-</style>
+.dj-slots-editor{display:grid;gap:8px;margin:10px 0}.dj-slot-row{display:grid;grid-template-columns:70px 1fr 1fr 1fr;gap:6px;align-items:center}.dj-slot-row input{min-width:0}@media(max-width:700px){.dj-slot-row{grid-template-columns:1fr}.dj-slot-row strong{margin-top:8px}}.dj-slot-display{display:grid;gap:6px;margin:10px 0}.dj-slot-item{padding:8px 10px;border:1px solid rgba(255,255,255,.18);border-radius:8px}.dj-slot-item a{color:inherit}</style>
 </head>
 <body>
   <header class="site-header">
@@ -192,6 +192,14 @@
               <input id="newEventTheme" placeholder="Theme / Genre" />
               <input id="newEventLocation" placeholder="Location" value="The LƎVE⅃ · Light · Raiden · Empyreum · Ward 2 · Plot 60" />
               <input id="newEventLineup" placeholder="DJ-Lineup" />
+<div class="dj-slots-editor">
+  <h4>DJ-Slots</h4>
+  <p class="muted">Pro Slot kannst du Uhrzeit, DJ-Name und Twitch-Link eintragen.</p>
+  <div class="dj-slot-row"><strong>Slot 1</strong><input id="newEventSlot1Time" placeholder="18:00–20:00 ST"><input id="newEventSlot1DJ" placeholder="DJ-Name"><input id="newEventSlot1Link" placeholder="Twitch-URL"></div>
+  <div class="dj-slot-row"><strong>Slot 2</strong><input id="newEventSlot2Time" placeholder="20:00–22:00 ST"><input id="newEventSlot2DJ" placeholder="DJ-Name"><input id="newEventSlot2Link" placeholder="Twitch-URL"></div>
+  <div class="dj-slot-row"><strong>Slot 3</strong><input id="newEventSlot3Time" placeholder="22:00–23:00 ST"><input id="newEventSlot3DJ" placeholder="DJ-Name"><input id="newEventSlot3Link" placeholder="Twitch-URL"></div>
+</div>
+
               <input id="newEventImage" placeholder="Banner-URL (optional)" />
               <textarea id="newEventDescription" placeholder="Beschreibung"></textarea>
           <label for="newEventDescriptionAlign">Beschreibung ausrichten</label>
