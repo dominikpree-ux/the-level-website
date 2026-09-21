@@ -472,3 +472,47 @@ showAdminArea = async function(user) {
   await originalShowAdminArea(user);
   if (isAdmin(user)) await loadAdminProfiles(user);
 };
+
+
+/* Admin: create staff profile directly */
+const createProfileButton = document.getElementById("createProfileButton");
+createProfileButton?.addEventListener("click", async () => {
+  const { data: userData } = await supabaseClient.auth.getUser();
+  if (!isAdmin(userData.user)) return;
+
+  const message = document.getElementById("createProfileMessage");
+  createProfileButton.disabled = true;
+
+  const payload = {
+    username: document.getElementById("newProfileUsername").value.trim(),
+    role: document.getElementById("newProfileRole").value.trim(),
+    avatar_url: document.getElementById("newProfileAvatar").value.trim(),
+    discord_name: document.getElementById("newProfileDiscord").value.trim(),
+    bio: document.getElementById("newProfileBio").value.trim(),
+    status: document.getElementById("newProfileStatus").value
+  };
+
+  if (!payload.username) {
+    message.textContent = "Bitte einen Anzeigenamen eingeben.";
+    createProfileButton.disabled = false;
+    return;
+  }
+
+  const { error } = await supabaseClient.rpc("admin_create_staff_profile", {
+    p_username: payload.username,
+    p_role: payload.role,
+    p_avatar_url: payload.avatar_url,
+    p_discord_name: payload.discord_name,
+    p_bio: payload.bio,
+    p_status: payload.status
+  });
+
+  message.textContent = error ? error.message : "Staff-Profil erstellt.";
+  if (!error) {
+    ["newProfileUsername","newProfileRole","newProfileAvatar","newProfileDiscord","newProfileBio"]
+      .forEach((id) => { document.getElementById(id).value = ""; });
+    await loadAdminProfiles(userData.user);
+    await loadPublicStaffProfiles();
+  }
+  createProfileButton.disabled = false;
+});
