@@ -77,29 +77,34 @@
     </nav>
     <div class="header-actions">
       <button class="lang-button" id="languageToggle" type="button">DE</button>
-      <a class="discord-button" href="#" data-i18n="discordButton">Join Discord</a>
+      <a class="discord-button" href="https://discord.gg/EAvJ8RbBzJ" data-i18n="discordButton">Join Discord</a>
     </div>
   </header>
 
   <main>
-    <section id="home" class="hero">
+    <section id="home" class="hero screenshot-hero">
       <div class="hero-overlay"></div>
+      <div class="hero-side-rail" aria-hidden="true">
+        <span>MUSIC</span><span>DRINKS</span><span>FRIENDS</span><span>GPOSE</span><span>EVENTS</span><span>AND MORE…</span>
+      </div>
       <div class="hero-content">
         <p class="eyebrow" data-i18n="eyebrow">FINAL FANTASY XIV NIGHTCLUB</p>
-        <h1><span>THE</span> LƎVE⅃</h1>
-        <p class="hero-subtitle" data-i18n="heroSubtitle">More than a club. A higher experience.</p>
-        <div class="hero-tags">
-          <span>Music</span><span>People</span><span>Fantasy</span><span>No limits</span>
+        <div class="hero-brand-lockup">
+          <span>THE</span>
+          <h1>LƎVE⅃</h1>
+          <p>MORE THAN A CLUB<br />A HIGHER EXPERIENCE</p>
         </div>
+        <div class="hero-tags"><span>Music</span><span>People</span><span>Fantasy</span><span>No limits</span></div>
         <div class="hero-actions">
           <a class="button primary" href="#events" data-i18n="nextEvent">Next Event</a>
-          <a class="button secondary" href="#about" data-i18n="discover">Discover The LƎVE⅃</a>
+          <a class="button secondary" href="https://discord.gg/EAvJ8RbBzJ" data-i18n="discordButton">Join Discord</a>
         </div>
       </div>
+      <div class="hero-scroll-note">↓<small>SCROLL DOWN</small></div>
       <div class="location" data-i18n="location">Light · Raiden · Empyreum · Ward 2 · Plot 60</div>
     </section>
 
-    <section class="quick-links">
+    <section class="quick-links screenshot-quick-links">
       <a href="#events"><strong>01</strong><span data-i18n="quickEvents">Events</span><small data-i18n="quickEventsSub">Upcoming nights</small></a>
       <a href="#staff-directory"><strong>02</strong><span data-i18n="quickStaff">Staff</span><small data-i18n="quickStaffSub">Meet the team</small></a>
       <a href="#gallery"><strong>03</strong><span data-i18n="quickGallery">Gallery</span><small data-i18n="quickGallerySub">Moments & Gpose</small></a>
@@ -288,9 +293,25 @@
     </section>
   </main>
 
-  <footer>
-    <img src="assets/logo-white.png" alt="The LƎVE⅃ logo" />
-    <p>© 2026 The LƎVE⅃ · Not affiliated with Square Enix.</p>
+
+    <section class="benefits-strip" aria-label="The LƎVE⅃ highlights">
+      <div><b>♧</b><span>AMAZING<br />COMMUNITY</span></div>
+      <div><b>♫</b><span>UNFORGETTABLE<br />EVENTS</span></div>
+      <div><b>♡</b><span>PASSIONATE<br />STAFF</span></div>
+      <div><b>☆</b><span>A HIGHER<br />EXPERIENCE</span></div>
+    </section>
+
+  <footer class="screenshot-footer">
+    <div class="footer-brand">
+      <img src="assets/logo-white.png" alt="The LƎVE⅃ logo" />
+      <span>FINAL FANTASY XIV NIGHTCLUB<br />LIGHT · RAIDEN · EMPYREUM · WARD 2 · PLOT 60</span>
+    </div>
+    <div class="footer-nav">
+      <a href="#home">HOME</a><a href="#events">EVENTS</a><a href="#staff-directory">STAFF</a><a href="#gallery">GALLERY</a><a href="#about">ABOUT</a>
+      <div class="footer-socials">◉　◈　◎　▶　♪</div>
+    </div>
+    <div class="footer-slogan">NEON NIGHTS<br />BRIGHTER TOMORROWS</div>
+    <p>© 2026 The LƎVE⅃ · Not affiliated with Square Enix.　|　Imprint　|　Privacy Policy</p>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
