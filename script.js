@@ -56,6 +56,42 @@ renderLanguage();
 
 
 
+
+/* Shared image framing helpers */
+function applyImageFrame(image, zoom = 1, positionX = 50, positionY = 50) {
+  if (!image) return;
+  image.style.objectFit = "cover";
+  image.style.objectPosition = `${positionX}% ${positionY}%`;
+  image.style.transformOrigin = `${positionX}% ${positionY}%`;
+  image.style.transform = `scale(${Math.max(1, Math.min(3, Number(zoom) || 1))})`;
+  image.style.clipPath = "inset(0)";
+}
+
+function bindImageFrameControls({ urlInput, zoomInput, xInput, yInput, preview, onChange }) {
+  const update = () => {
+    const zoom = Number(zoomInput?.value || 100) / 100;
+    const x = Number(xInput?.value || 50);
+    const y = Number(yInput?.value || 50);
+    if (preview) {
+      preview.src = urlInput?.value?.trim() || "";
+      applyImageFrame(preview, zoom, x, y);
+    }
+    const zoomValue = document.getElementById(`${zoomInput?.id}Value`);
+    const xValue = document.getElementById(`${xInput?.id}Value`);
+    const yValue = document.getElementById(`${yInput?.id}Value`);
+    if (zoomValue) zoomValue.textContent = `${Math.round(zoom * 100)}%`;
+    if (xValue) xValue.textContent = `${x}%`;
+    if (yValue) yValue.textContent = `${y}%`;
+    if (typeof onChange === "function") onChange({ zoom, x, y });
+  };
+  [urlInput, zoomInput, xInput, yInput].filter(Boolean).forEach((element) => {
+    element.addEventListener("input", update);
+    element.addEventListener("change", update);
+  });
+  update();
+  return update;
+}
+
 /* Public approved staff directory */
 const publicStaffList = document.getElementById("publicStaffList");
 
@@ -70,6 +106,7 @@ function createStaffCard(profile) {
   image.onerror = () => {
     image.src = "assets/character.png";
   };
+  applyImageFrame(image, profile.image_zoom || 1, profile.image_position_x ?? 50, profile.image_position_y ?? 50);
 
   const name = document.createElement("h3");
   name.textContent = profile.username || "The LƎVE⅃ Staff";
@@ -99,7 +136,7 @@ async function loadPublicStaffProfiles() {
 
   const { data, error } = await supabaseClient
     .from("staff_profiles")
-    .select("username, role, avatar_url, bio, discord_name, status")
+    .select("username, role, avatar_url, image_zoom, image_position_x, image_position_y, bio, discord_name, status")
     .eq("status", "approved")
     .order("username", { ascending: true });
 
@@ -181,7 +218,7 @@ async function renderDashboard(user) {
   await showAdminArea(user);
   const { data, error } = await supabaseClient
     .from("staff_profiles")
-    .select("username, role, status, avatar_url, bio, discord_name")
+    .select("username, role, status, avatar_url, image_zoom, image_position_x, image_position_y, bio, discord_name")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -201,6 +238,9 @@ async function renderDashboard(user) {
 
   document.getElementById("profileUsername").value = data.username || "";
   document.getElementById("profileImageUrl").value = data.avatar_url || "";
+  document.getElementById("profileImageZoom").value = Math.round((data.image_zoom || 1) * 100);
+  document.getElementById("profileImageX").value = data.image_position_x ?? 50;
+  document.getElementById("profileImageY").value = data.image_position_y ?? 50;
   document.getElementById("profileDiscord").value = data.discord_name || "";
   document.getElementById("profileBio").value = data.bio || "";
   profileRoleInfo.textContent = `Zugewiesene Rolle: ${data.role || "Noch nicht zugewiesen"} · Status: ${data.status || "pending"}`;
@@ -219,6 +259,9 @@ document.getElementById("saveProfileButton")?.addEventListener("click", async ()
   const payload = {
     username: document.getElementById("profileUsername").value.trim(),
     avatar_url: document.getElementById("profileImageUrl").value.trim(),
+    image_zoom: Number(document.getElementById("profileImageZoom").value || 100) / 100,
+    image_position_x: Number(document.getElementById("profileImageX").value || 50),
+    image_position_y: Number(document.getElementById("profileImageY").value || 50),
     discord_name: document.getElementById("profileDiscord").value.trim(),
     bio: document.getElementById("profileBio").value.trim()
   };
@@ -232,6 +275,17 @@ document.getElementById("saveProfileButton")?.addEventListener("click", async ()
     ? error.message
     : "Profil erfolgreich gespeichert.";
 });
+
+
+const profileImageControls = {
+  urlInput: document.getElementById("profileImageUrl"),
+  zoomInput: document.getElementById("profileImageZoom"),
+  xInput: document.getElementById("profileImageX"),
+  yInput: document.getElementById("profileImageY"),
+  preview: document.getElementById("profileImagePreview")
+};
+if (profileImageControls.urlInput) bindImageFrameControls(profileImageControls);
+
 
 document.getElementById("logoutButton")?.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
@@ -632,6 +686,7 @@ function buildPublicEventCard(event) {
     image.src = event.image_url;
     image.alt = event.title || "Event banner";
     image.loading = "lazy";
+    applyImageFrame(image, event.image_zoom || 1, event.image_position_x ?? 50, event.image_position_y ?? 50);
     card.appendChild(image);
   }
 
@@ -669,7 +724,7 @@ async function loadPublicEvents() {
 
   const { data, error } = await supabaseClient
     .from("events")
-    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, description_align, status")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, image_zoom, image_position_x, image_position_y, description_align, status")
     .eq("status", "published")
     .gte("event_date", new Date().toISOString().slice(0, 10))
     .order("event_date", { ascending: true })
@@ -706,7 +761,7 @@ async function loadAdminEvents(user) {
 
   const { data, error } = await supabaseClient
     .from("events")
-    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, description_align, status")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, image_zoom, image_position_x, image_position_y, description_align, status")
     .order("event_date", { ascending: true });
 
   if (error) {
@@ -738,6 +793,28 @@ async function loadAdminEvents(user) {
     editDJs.innerHTML = renderDJs(event.lineup) || "<span class='muted'>DJ-Slots werden über das neue Slot-Formular gepflegt.</span>";
 
     const image = eventInput("Banner-URL", event.image_url);
+    const imageControls = document.createElement("div");
+    imageControls.className = "image-frame-controls admin-image-frame";
+    imageControls.innerHTML = `
+      <label>Zoom <span class="image-frame-value" id="eventZoomValue_${event.id}">${Math.round((event.image_zoom || 1) * 100)}%</span></label>
+      <input type="range" min="100" max="300" step="5" value="${Math.round((event.image_zoom || 1) * 100)}" id="eventZoom_${event.id}">
+      <label>Horizontal <span class="image-frame-value" id="eventXValue_${event.id}">${event.image_position_x ?? 50}%</span></label>
+      <input type="range" min="0" max="100" step="1" value="${event.image_position_x ?? 50}" id="eventX_${event.id}">
+      <label>Vertikal <span class="image-frame-value" id="eventYValue_${event.id}">${event.image_position_y ?? 50}%</span></label>
+      <input type="range" min="0" max="100" step="1" value="${event.image_position_y ?? 50}" id="eventY_${event.id}">
+      <img class="image-frame-preview" id="eventPreview_${event.id}" alt="Banner Vorschau">
+    `;
+    const eventZoom = imageControls.querySelector(`#eventZoom_${event.id}`);
+    const eventX = imageControls.querySelector(`#eventX_${event.id}`);
+    const eventY = imageControls.querySelector(`#eventY_${event.id}`);
+    const eventPreview = imageControls.querySelector(`#eventPreview_${event.id}`);
+    bindImageFrameControls({
+      urlInput: image,
+      zoomInput: eventZoom,
+      xInput: eventX,
+      yInput: eventY,
+      preview: eventPreview
+    });
     const description = document.createElement("textarea");
     description.placeholder = "Beschreibung";
     description.value = event.description || "";
@@ -771,6 +848,9 @@ async function loadAdminEvents(user) {
           location: location.value.trim(),
           lineup: lineup.value.trim(),
           image_url: image.value.trim(),
+          image_zoom: Number(eventZoom.value || 100) / 100,
+          image_position_x: Number(eventX.value || 50),
+          image_position_y: Number(eventY.value || 50),
           description: description.value.trim(),
           description_align: descriptionAlign.value,
           status: status.value
@@ -800,7 +880,7 @@ supabaseClient.auth.getSession().then(({ data }) => {
       await loadPublicEvents();
     });
 
-    card.append(title, date, time, theme, location, lineup, editDJs, image, description, descriptionAlign, status, save, remove);
+    card.append(title, date, time, theme, location, lineup, editDJs, image, imageControls, description, descriptionAlign, status, save, remove);
     adminEventsList.appendChild(card);
   });
 }
@@ -874,7 +954,7 @@ function applyDescriptionAlignment(element, alignment) {
 async function syncHomepageEventDetails() {
   const { data, error } = await supabaseClient
     .from("events")
-    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, description_align, status")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, image_zoom, image_position_x, image_position_y, description_align, status")
     .eq("status", "published")
     .gte("event_date", new Date().toISOString().slice(0, 10))
     .order("event_date", { ascending: true })
@@ -929,45 +1009,3 @@ async function syncHomepageEventDetails() {
 }
 
 syncHomepageEventDetails();
-
-/* Public staff card size selector */
-(() => {
-  const staffGrid = document.getElementById("publicStaffList");
-  const sizeButtons = Array.from(document.querySelectorAll("[data-staff-size]"));
-  if (!staffGrid || !sizeButtons.length) return;
-
-  const storageKey = "the-level-staff-card-size";
-  const allowedSizes = ["compact", "standard", "wide"];
-
-  function applyStaffCardSize(size) {
-    const selectedSize = allowedSizes.includes(size) ? size : "standard";
-    staffGrid.classList.remove("staff-size-compact", "staff-size-standard", "staff-size-wide");
-    staffGrid.classList.add(`staff-size-${selectedSize}`);
-
-    sizeButtons.forEach((button) => {
-      const isActive = button.dataset.staffSize === selectedSize;
-      button.classList.toggle("is-active", isActive);
-      button.setAttribute("aria-pressed", String(isActive));
-    });
-
-    try {
-      window.localStorage.setItem(storageKey, selectedSize);
-    } catch (error) {
-      console.warn("Could not save staff card size preference:", error);
-    }
-  }
-
-  let savedSize = "standard";
-  try {
-    savedSize = window.localStorage.getItem(storageKey) || "standard";
-  } catch (error) {
-    console.warn("Could not read staff card size preference:", error);
-  }
-
-  sizeButtons.forEach((button) => {
-    button.addEventListener("click", () => applyStaffCardSize(button.dataset.staffSize));
-  });
-
-  applyStaffCardSize(savedSize);
-})();
-
