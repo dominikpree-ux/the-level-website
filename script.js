@@ -72,6 +72,7 @@ function showStaffPanel(area) {
   authArea.hidden = area !== "auth";
   applicationArea.hidden = area !== "application";
   dashboardArea.hidden = area !== "dashboard";
+  if (adminArea) adminArea.hidden = true;
   staffPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -101,6 +102,7 @@ document.getElementById("loginButton")?.addEventListener("click", async () => {
 async function renderDashboard(user) {
   showStaffPanel("dashboard");
   document.getElementById("dashboardWelcome").textContent = `Angemeldet als: ${user.email}`;
+  await showAdminArea(user);
   const { data, error } = await supabaseClient
     .from("staff_profiles")
     .select("username, role, status")
@@ -142,6 +144,104 @@ document.getElementById("submitApplicationButton")?.addEventListener("click", as
   applicationMessageStatus.textContent = error
     ? error.message
     : "Danke! Deine Bewerbung wurde erfolgreich übermittelt.";
+});
+
+/* Admin application management
+   IMPORTANT: Replace ADMIN_EMAIL with your own admin email.
+   The matching Supabase RLS policies must also be created in SQL Editor. */
+const ADMIN_EMAIL = "dominikpree@gmail.com";
+const adminArea = document.getElementById("adminArea");
+const adminMessage = document.getElementById("adminMessage");
+const applicationsList = document.getElementById("applicationsList");
+
+function isAdmin(user) {
+  return Boolean(user?.email) && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+}
+
+async function showAdminArea(user) {
+  if (!isAdmin(user)) {
+    adminMessage.textContent = "Kein Admin-Zugriff.";
+    adminArea.hidden = true;
+    return;
+  }
+  adminArea.hidden = false;
+}
+
+async function loadApplications(user) {
+  if (!isAdmin(user)) {
+    adminMessage.textContent = "Kein Admin-Zugriff.";
+    return;
+  }
+
+  adminMessage.textContent = "Bewerbungen werden geladen...";
+  applicationsList.replaceChildren();
+
+  const { data, error } = await supabaseClient
+    .from("staff_applications")
+    .select("id, name, email, desired_role, experience, message, status, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    adminMessage.textContent = error.message;
+    return;
+  }
+
+  if (!data?.length) {
+    adminMessage.textContent = "Keine Bewerbungen vorhanden.";
+    return;
+  }
+
+  data.forEach((application) => {
+    const card = document.createElement("article");
+    card.className = "application-card";
+
+    const title = document.createElement("h4");
+    title.textContent = `${application.name} · ${application.desired_role}`;
+    card.appendChild(title);
+
+    const details = document.createElement("p");
+    details.textContent =
+      `E-Mail: ${application.email} | Erstellt: ${new Date(application.created_at).toLocaleString()}`;
+    card.appendChild(details);
+
+    const experience = document.createElement("p");
+    experience.textContent = `Erfahrung: ${application.experience || "Keine Angabe"}`;
+    card.appendChild(experience);
+
+    const message = document.createElement("p");
+    message.textContent = application.message || "Keine Nachricht";
+    card.appendChild(message);
+
+    const select = document.createElement("select");
+    ["pending", "approved", "rejected"].forEach((status) => {
+      const option = document.createElement("option");
+      option.value = status;
+      option.textContent = status;
+      option.selected = application.status === status;
+      select.appendChild(option);
+    });
+
+    select.addEventListener("change", async () => {
+      const { error: updateError } = await supabaseClient
+        .from("staff_applications")
+        .update({ status: select.value, reviewed_by: user.id, reviewed_at: new Date().toISOString() })
+        .eq("id", application.id);
+
+      adminMessage.textContent = updateError
+        ? updateError.message
+        : "Status erfolgreich aktualisiert.";
+    });
+
+    card.appendChild(select);
+    applicationsList.appendChild(card);
+  });
+
+  adminMessage.textContent = `${data.length} Bewerbung(en) geladen.`;
+}
+
+document.getElementById("loadApplicationsButton")?.addEventListener("click", async () => {
+  const { data } = await supabaseClient.auth.getUser();
+  await loadApplications(data.user);
 });
 
 supabaseClient.auth.getSession().then(({ data }) => {
