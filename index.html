@@ -36,6 +36,17 @@
     .admin-profile-card { margin:16px 0; padding:16px; border:1px solid rgba(255,255,255,.18); border-radius:12px; }
     .admin-profile-card input, .admin-profile-card textarea, .admin-profile-card select { display:block; width:100%; box-sizing:border-box; margin:8px 0; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:#111; color:inherit; }
 
+  
+    /* Symmetrische, mittig ausgerichtete Event-Beschreibung */
+    .next-event-description {
+      max-width: 680px;
+      margin: 14px auto 18px;
+      text-align: center;
+      line-height: 1.7;
+      text-wrap: balance;
+    }
+    .event-info { text-align: center; }
+    .event-info .eyebrow, .event-info h3, .event-info p { margin-left: auto; margin-right: auto; }
   </style>
 </head>
 <body>
@@ -90,11 +101,11 @@
         <a class="text-link" href="#about" data-i18n="moreAbout">More about us →</a>
       </div>
       <article class="event-card">
-        <div class="event-date"><strong>02</strong><span>OCT<br />2026</span></div>
+        <div class="event-date" id="nextEventDate"><strong>02</strong><span>OCT<br />2026</span></div>
         <div class="event-info">
           <p class="eyebrow" data-i18n="nextEventLabel">NEXT EVENT</p>
-          <h3 data-i18n="eventTitle">Grand Opening — Level 1</h3>
-          <p data-i18n="eventDetails">6:00 PM ST · DJ Lineup · The LƎVE⅃</p>
+          <h3 id="nextEventTitle" data-i18n="eventTitle">Grand Opening — Level 1</h3>
+          <p id="nextEventDescription" class="next-event-description" data-i18n="eventDetails">6:00 PM ST · DJ Lineup · The LƎVE⅃</p>
           <a class="button primary" href="#" data-i18n="eventDetailsButton">Event Details</a>
         </div>
       </article>
@@ -248,5 +259,6 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
+<!-- Homepage event data hooks: add these IDs to the corresponding existing elements for live updates. -->
 </body>
 </html>
