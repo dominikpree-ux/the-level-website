@@ -274,9 +274,6 @@ async function showAdminArea(user) {
     return;
   }
   adminArea.hidden = false;
-  const eventsArea = document.getElementById("adminEventsArea");
-  if (eventsArea) eventsArea.hidden = false;
-  if (typeof loadAdminEvents === "function") await loadAdminEvents(user);
 }
 
 async function loadApplications(user) {
@@ -559,8 +556,7 @@ function makeRichEditor(textarea, initialValue = "") {
     button("↔", "justifyCenter"),
     button("→", "justifyRight"),
     button("• Liste", "insertUnorderedList"),
-    button("1. Liste", "insertOrderedList"),
-    button("🔗 Link", "createLink")
+    button("1. Liste", "insertOrderedList")
   );
   const size = document.createElement("select");
   size.innerHTML = '<option value="">Schriftgröße</option><option value="2">Klein</option><option value="3">Normal</option><option value="5">Groß</option><option value="7">Sehr groß</option>';
@@ -571,18 +567,6 @@ function makeRichEditor(textarea, initialValue = "") {
     textarea.value = editor.innerHTML;
     size.value = "";
   });
-  const linkButton = document.createElement("button");
-  linkButton.type = "button";
-  linkButton.textContent = "🔗 Link";
-  linkButton.addEventListener("click", () => {
-    const url = prompt("Link-URL einfügen:");
-    if (!url) return;
-    editor.focus();
-    document.execCommand("createLink", false, url);
-    textarea.value = editor.innerHTML;
-  });
-  toolbar.append(linkButton);
-
   toolbar.append(size);
 
   const image = document.createElement("button");
@@ -631,8 +615,6 @@ function renderDJs(lineup) {
   return `<div class="dj-slot-display">${slots.map(s => `<div class="dj-slot-item"><strong>Slot ${s.slot}</strong>${s.time ? ` · ${s.time}` : ""}${s.dj ? ` · ${s.link ? `<a href="${s.link.replace(/"/g,"&quot;")}" target="_blank" rel="noopener">${s.dj}</a>` : s.dj}` : ""}</div>`).join("")}</div>`;
 }
 
-
-
 /* Event management */
 const publicEventsList = document.getElementById("publicEventsList");
 const adminEventsArea = document.getElementById("adminEventsArea");
@@ -679,6 +661,7 @@ function buildPublicEventCard(event) {
     if (rendered) lineup.innerHTML = rendered;
     else lineup.textContent = `DJ-Lineup: ${event.lineup}`;
     card.appendChild(lineup);
+  }
 
   return card;
 }
