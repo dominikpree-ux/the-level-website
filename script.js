@@ -572,7 +572,7 @@ async function loadPublicEvents() {
 
   const { data, error } = await supabaseClient
     .from("events")
-    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, status")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, description_align, status")
     .eq("status", "published")
     .gte("event_date", new Date().toISOString().slice(0, 10))
     .order("event_date", { ascending: true })
@@ -609,7 +609,7 @@ async function loadAdminEvents(user) {
 
   const { data, error } = await supabaseClient
     .from("events")
-    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, status")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, description_align, status")
     .order("event_date", { ascending: true });
 
   if (error) {
@@ -746,11 +746,18 @@ loadPublicEvents();
 
 
 
+
+function applyDescriptionAlignment(element, alignment) {
+  if (!element) return;
+  element.classList.remove("description-align-left", "description-align-center");
+  element.classList.add(alignment === "center" ? "description-align-center" : "description-align-left");
+}
+
 /* Homepage event synchronization */
 async function syncHomepageEventDetails() {
   const { data, error } = await supabaseClient
     .from("events")
-    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, status")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, description_align, status")
     .eq("status", "published")
     .gte("event_date", new Date().toISOString().slice(0, 10))
     .order("event_date", { ascending: true })
@@ -769,6 +776,8 @@ async function syncHomepageEventDetails() {
   setText("next-event-details-title", event.title);
   setText("nextEventDescription", event.event_time || "");
   setText("next-event-details-description", event.description || "Für dieses Event wurde noch keine Beschreibung hinterlegt.");
+  applyDescriptionAlignment(document.getElementById("nextEventDescription"), event.description_align);
+  applyDescriptionAlignment(document.getElementById("next-event-details-description"), event.description_align);
 
   const dateElement = document.getElementById("nextEventDate");
   if (dateElement) {
