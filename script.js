@@ -520,6 +520,83 @@ createProfileButton?.addEventListener("click", async () => {
 });
 
 
+
+function makeRichEditor(textarea, initialValue = "") {
+  if (!textarea || textarea.dataset.richReady === "true") return textarea;
+  textarea.dataset.richReady = "true";
+  textarea.style.display = "none";
+
+  const wrap = document.createElement("div");
+  wrap.className = "rich-editor-wrap";
+  const toolbar = document.createElement("div");
+  toolbar.className = "rich-toolbar";
+  const editor = document.createElement("div");
+  editor.className = "rich-editor";
+  editor.contentEditable = "true";
+  editor.dataset.placeholder = "Beschreibung schreiben …";
+  editor.innerHTML = initialValue || textarea.value || "";
+
+  const button = (label, command, value = null) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = label;
+    b.addEventListener("click", () => {
+      editor.focus();
+      document.execCommand(command, false, value);
+      textarea.value = editor.innerHTML;
+      editor.dispatchEvent(new Event("input", {bubbles:true}));
+    });
+    return b;
+  };
+  toolbar.append(
+    button("B", "bold"),
+    button("I", "italic"),
+    button("U", "underline"),
+    button("←", "justifyLeft"),
+    button("↔", "justifyCenter"),
+    button("→", "justifyRight"),
+    button("• Liste", "insertUnorderedList"),
+    button("1. Liste", "insertOrderedList")
+  );
+  const size = document.createElement("select");
+  size.innerHTML = '<option value="">Schriftgröße</option><option value="2">Klein</option><option value="3">Normal</option><option value="5">Groß</option><option value="7">Sehr groß</option>';
+  size.addEventListener("change", () => {
+    if (!size.value) return;
+    editor.focus();
+    document.execCommand("fontSize", false, size.value);
+    textarea.value = editor.innerHTML;
+    size.value = "";
+  });
+  toolbar.append(size);
+
+  const image = document.createElement("button");
+  image.type = "button";
+  image.textContent = "Bild einfügen";
+  image.addEventListener("click", () => {
+    const url = prompt("Bild-URL einfügen:");
+    if (!url) return;
+    editor.focus();
+    document.execCommand("insertHTML", false, `<img src="${url.replace(/"/g,"&quot;")}" alt="Event-Bild">`);
+    textarea.value = editor.innerHTML;
+  });
+  toolbar.append(image);
+
+  editor.addEventListener("input", () => { textarea.value = editor.innerHTML; });
+  wrap.append(toolbar, editor);
+  textarea.parentNode.insertBefore(wrap, textarea.nextSibling);
+  textarea.value = editor.innerHTML;
+  return textarea;
+}
+
+function renderRichDescription(target, value, align = "left") {
+  if (!target) return;
+  target.innerHTML = value || "";
+  target.classList.remove("description-align-left","description-align-center");
+  target.classList.add(align === "center" ? "description-align-center" : "description-align-left");
+}
+
+makeRichEditor(document.getElementById("newEventDescription"));
+
 /* Event management */
 const publicEventsList = document.getElementById("publicEventsList");
 const adminEventsArea = document.getElementById("adminEventsArea");
@@ -552,8 +629,7 @@ function buildPublicEventCard(event) {
   card.appendChild(meta);
 
   const description = document.createElement("p");
-  description.textContent = event.description || "";
-  description.classList.add(event.description_align === "center" ? "description-align-center" : "description-align-left");
+  renderRichDescription(description, event.description, event.description_align);
   card.appendChild(description);
 
   const location = document.createElement("p");
@@ -638,6 +714,7 @@ async function loadAdminEvents(user) {
     const description = document.createElement("textarea");
     description.placeholder = "Beschreibung";
     description.value = event.description || "";
+    makeRichEditor(description, event.description || "");
     const descriptionAlign = document.createElement("select");
     descriptionAlign.innerHTML = '<option value="left">Linksbündig</option><option value="center">Zentriert</option>';
     descriptionAlign.value = event.description_align || "left";
@@ -796,8 +873,7 @@ async function syncHomepageEventDetails() {
   if (details) {
     details.replaceChildren();
     const detailsDescription = document.createElement("p");
-    detailsDescription.textContent = event.description || "Für dieses Event wurde noch keine Beschreibung hinterlegt.";
-    detailsDescription.classList.add(event.description_align === "center" ? "description-align-center" : "description-align-left");
+    renderRichDescription(detailsDescription, event.description || "Für dieses Event wurde noch keine Beschreibung hinterlegt.", event.description_align);
     details.appendChild(detailsDescription);
     [
       ["Datum", event.event_date],
