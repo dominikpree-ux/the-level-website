@@ -516,3 +516,230 @@ createProfileButton?.addEventListener("click", async () => {
   }
   createProfileButton.disabled = false;
 });
+
+
+/* Event management */
+const publicEventsList = document.getElementById("publicEventsList");
+const adminEventsArea = document.getElementById("adminEventsArea");
+const adminEventsList = document.getElementById("adminEventsList");
+const createEventButton = document.getElementById("createEventButton");
+
+function eventText(value) {
+  return value || "";
+}
+
+function buildPublicEventCard(event) {
+  const card = document.createElement("article");
+  card.className = "public-event-card";
+
+  if (event.image_url) {
+    const image = document.createElement("img");
+    image.src = event.image_url;
+    image.alt = event.title || "Event banner";
+    image.loading = "lazy";
+    card.appendChild(image);
+  }
+
+  const title = document.createElement("h3");
+  title.textContent = event.title;
+  card.appendChild(title);
+
+  const meta = document.createElement("p");
+  meta.className = "muted";
+  meta.textContent = [event.event_date, event.event_time, event.theme].filter(Boolean).join(" · ");
+  card.appendChild(meta);
+
+  const description = document.createElement("p");
+  description.textContent = event.description || "";
+  card.appendChild(description);
+
+  const location = document.createElement("p");
+  location.className = "muted";
+  location.textContent = event.location || "";
+  card.appendChild(location);
+
+  if (event.lineup) {
+    const lineup = document.createElement("p");
+    lineup.textContent = `DJ-Lineup: ${event.lineup}`;
+    card.appendChild(lineup);
+  }
+
+  return card;
+}
+
+async function loadPublicEvents() {
+  if (!publicEventsList) return;
+
+  const { data, error } = await supabaseClient
+    .from("events")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, status")
+    .eq("status", "published")
+    .gte("event_date", new Date().toISOString().slice(0, 10))
+    .order("event_date", { ascending: true })
+    .order("event_time", { ascending: true });
+
+  publicEventsList.replaceChildren();
+
+  if (error) {
+    publicEventsList.textContent = error.message;
+    return;
+  }
+
+  if (!data?.length) {
+    publicEventsList.textContent = "Noch keine kommenden Events.";
+    return;
+  }
+
+  data.forEach((event) => publicEventsList.appendChild(buildPublicEventCard(event)));
+}
+
+function eventInput(placeholder, value, type = "text") {
+  const input = document.createElement("input");
+  input.placeholder = placeholder;
+  input.value = value || "";
+  input.type = type;
+  return input;
+}
+
+async function loadAdminEvents(user) {
+  if (!adminEventsArea || !adminEventsList || !isAdmin(user)) return;
+
+  adminEventsArea.hidden = false;
+  adminEventsList.replaceChildren();
+
+  const { data, error } = await supabaseClient
+    .from("events")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, status")
+    .order("event_date", { ascending: true });
+
+  if (error) {
+    adminEventsList.textContent = error.message;
+    return;
+  }
+
+  (data || []).forEach((event) => {
+    const card = document.createElement("article");
+    card.className = "admin-event-card";
+
+    const heading = document.createElement("h4");
+    heading.textContent = event.title || "Unbenanntes Event";
+    card.appendChild(heading);
+
+    const title = eventInput("Event-Titel", event.title);
+    const date = eventInput("Datum", event.event_date, "date");
+    const time = eventInput("Zeit", event.event_time);
+    const theme = eventInput("Theme / Genre", event.theme);
+    const location = eventInput("Location", event.location);
+    const lineup = eventInput("DJ-Lineup", event.lineup);
+    const image = eventInput("Banner-URL", event.image_url);
+    const description = document.createElement("textarea");
+    description.placeholder = "Beschreibung";
+    description.value = event.description || "";
+
+    const status = document.createElement("select");
+    ["published", "draft"].forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      option.selected = event.status === value;
+      status.appendChild(option);
+    });
+
+    const save = document.createElement("button");
+    save.type = "button";
+    save.className = "button primary";
+    save.textContent = "Speichern";
+    save.addEventListener("click", async () => {
+      save.disabled = true;
+      const { error: updateError } = await supabaseClient
+        .from("events")
+        .update({
+          title: title.value.trim(),
+          event_date: date.value || null,
+          event_time: time.value.trim(),
+          theme: theme.value.trim(),
+          location: location.value.trim(),
+          lineup: lineup.value.trim(),
+          image_url: image.value.trim(),
+          description: description.value.trim(),
+          status: status.value
+        })
+        .eq("id", event.id);
+
+      adminMessage.textContent = updateError ? updateError.message : "Event gespeichert.";
+      save.disabled = false;
+      await loadPublicEvents();
+    });
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "button secondary";
+    remove.textContent = "Löschen";
+    remove.addEventListener("click", async () => {
+      if (!confirm(`Event "${event.title}" wirklich löschen?`)) return;
+      remove.disabled = true;
+      const { error: deleteError } = await supabaseClient.from("events").delete().eq("id", event.id);
+      adminMessage.textContent = deleteError ? deleteError.message : "Event gelöscht.";
+      await loadAdminEvents(user);
+      await loadPublicEvents();
+    });
+
+    card.append(title, date, time, theme, location, lineup, image, description, status, save, remove);
+    adminEventsList.appendChild(card);
+  });
+}
+
+createEventButton?.addEventListener("click", async () => {
+  const { data: userData } = await supabaseClient.auth.getUser();
+  if (!isAdmin(userData.user)) return;
+
+  const message = document.getElementById("createEventMessage");
+  createEventButton.disabled = true;
+
+  const payload = {
+    title: document.getElementById("newEventTitle").value.trim(),
+    event_date: document.getElementById("newEventDate").value || null,
+    event_time: document.getElementById("newEventTime").value.trim(),
+    theme: document.getElementById("newEventTheme").value.trim(),
+    location: document.getElementById("newEventLocation").value.trim(),
+    lineup: document.getElementById("newEventLineup").value.trim(),
+    image_url: document.getElementById("newEventImage").value.trim(),
+    description: document.getElementById("newEventDescription").value.trim(),
+    status: document.getElementById("newEventStatus").value
+  };
+
+  if (!payload.title || !payload.event_date) {
+    message.textContent = "Bitte mindestens Titel und Datum angeben.";
+    createEventButton.disabled = false;
+    return;
+  }
+
+  const { error } = await supabaseClient.rpc("admin_create_event", {
+    p_title: payload.title,
+    p_event_date: payload.event_date,
+    p_event_time: payload.event_time,
+    p_theme: payload.theme,
+    p_description: payload.description,
+    p_location: payload.location,
+    p_lineup: payload.lineup,
+    p_image_url: payload.image_url,
+    p_status: payload.status
+  });
+
+  message.textContent = error ? error.message : "Event erstellt.";
+  if (!error) {
+    ["newEventTitle","newEventDate","newEventTime","newEventTheme","newEventLineup","newEventImage","newEventDescription"]
+      .forEach((id) => { document.getElementById(id).value = ""; });
+    await loadAdminEvents(userData.user);
+    await loadPublicEvents();
+  }
+  createEventButton.disabled = false;
+});
+
+const previousShowAdminAreaForEvents = showAdminArea;
+showAdminArea = async function(user) {
+  await previousShowAdminAreaForEvents(user);
+  if (isAdmin(user)) await loadAdminEvents(user);
+};
+
+loadPublicEvents();
