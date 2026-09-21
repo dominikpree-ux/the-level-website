@@ -18,6 +18,14 @@
     .profile-preview { display:flex; gap:16px; align-items:flex-start; margin:16px 0; }
     .profile-preview img { width:96px; height:96px; object-fit:cover; border-radius:50%; border:1px solid rgba(255,255,255,.25); }
 
+    .public-staff-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:24px; }
+    .public-staff-card { padding:18px; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(0,0,0,.22); }
+    .public-staff-card img { width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:12px; margin-bottom:12px; background:rgba(255,255,255,.06); }
+    .public-staff-card h3 { margin:0 0 6px; }
+    .public-staff-card .staff-role { color:#ff7bd8; font-weight:700; letter-spacing:.04em; text-transform:uppercase; font-size:.8rem; }
+    .public-staff-card .staff-bio { margin-top:10px; }
+    .public-staff-empty { margin-top:20px; opacity:.75; }
+
   </style>
 </head>
 <body>
@@ -58,7 +66,7 @@
 
     <section class="quick-links">
       <a href="#events"><strong>01</strong><span data-i18n="quickEvents">Events</span><small data-i18n="quickEventsSub">Upcoming nights</small></a>
-      <a href="#staff"><strong>02</strong><span data-i18n="quickStaff">Staff</span><small data-i18n="quickStaffSub">Join our team</small></a>
+      <a href="#staff-directory"><strong>02</strong><span data-i18n="quickStaff">Staff</span><small data-i18n="quickStaffSub">Meet the team</small></a>
       <a href="#gallery"><strong>03</strong><span data-i18n="quickGallery">Gallery</span><small data-i18n="quickGallerySub">Moments & Gpose</small></a>
       <a href="#about"><strong>04</strong><span data-i18n="quickAbout">About</span><small data-i18n="quickAboutSub">Our story</small></a>
     </section>
@@ -139,6 +147,16 @@
           <p id="adminMessage" class="muted" role="status"></p>
           <div id="applicationsList"></div>
         </div>
+      </div>
+    </section>
+
+
+    <section id="staff-directory" class="section">
+      <p class="eyebrow">MEET THE TEAM</p>
+      <h2>Our Staff.</h2>
+      <p class="muted">Discover the approved members of The LƎVE⅃ team.</p>
+      <div id="publicStaffList" class="public-staff-grid">
+        <p class="public-staff-empty">Staff profiles are loading...</p>
       </div>
     </section>
 
