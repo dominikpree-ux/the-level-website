@@ -745,6 +745,7 @@ showAdminArea = async function(user) {
 loadPublicEvents();
 
 
+
 /* Homepage event synchronization */
 async function syncHomepageEventDetails() {
   const { data, error } = await supabaseClient
@@ -765,17 +766,14 @@ async function syncHomepageEventDetails() {
   };
 
   setText("nextEventTitle", event.title);
-  setText("nextEventDate", event.event_date);
-  setText("nextEventTime", event.event_time);
-  setText("nextEventTheme", event.theme);
-  setText("nextEventDescription", event.description);
-  setText("nextEventLocation", event.location);
-  setText("nextEventLineup", event.lineup);
+  setText("next-event-details-title", event.title);
+  setText("nextEventDescription", event.event_time || "");
+  setText("next-event-details-description", event.description || "Für dieses Event wurde noch keine Beschreibung hinterlegt.");
 
-  const image = document.getElementById("nextEventImage");
-  if (image && event.image_url) {
-    image.src = event.image_url;
-    image.alt = event.title || "Next event banner";
+  const dateElement = document.getElementById("nextEventDate");
+  if (dateElement) {
+    const date = new Date(`${event.event_date}T12:00:00`);
+    dateElement.innerHTML = `<strong>${String(date.getDate()).padStart(2, "0")}</strong><span>${date.toLocaleDateString("en-US", { month: "short" }).toUpperCase()}<br />${date.getFullYear()}</span>`;
   }
 
   const details = document.getElementById("eventDetails");
@@ -796,6 +794,9 @@ async function syncHomepageEventDetails() {
       details.appendChild(row);
     });
   }
+
+  const button = document.getElementById("nextEventDetailsButton");
+  if (button) button.href = "#next-event-details";
 }
 
 syncHomepageEventDetails();
