@@ -182,7 +182,7 @@ async function renderDashboard(user) {
   const { data, error } = await supabaseClient
     .from("staff_profiles")
     .select("username, role, status, avatar_url, bio, discord_name")
-    .eq("id", user.id)
+    .eq("user_id", user.id)
     .maybeSingle();
 
   if (error) {
@@ -226,7 +226,7 @@ document.getElementById("saveProfileButton")?.addEventListener("click", async ()
   const { error } = await supabaseClient
     .from("staff_profiles")
     .update(payload)
-    .eq("id", user.id);
+    .eq("user_id", user.id);
 
   profileMessage.textContent = error
     ? error.message
