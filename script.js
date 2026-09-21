@@ -743,3 +743,59 @@ showAdminArea = async function(user) {
 };
 
 loadPublicEvents();
+
+
+/* Homepage event synchronization */
+async function syncHomepageEventDetails() {
+  const { data, error } = await supabaseClient
+    .from("events")
+    .select("id, title, event_date, event_time, theme, description, location, lineup, image_url, status")
+    .eq("status", "published")
+    .gte("event_date", new Date().toISOString().slice(0, 10))
+    .order("event_date", { ascending: true })
+    .order("event_time", { ascending: true })
+    .limit(1);
+
+  if (error || !data?.length) return;
+
+  const event = data[0];
+  const setText = (id, value) => {
+    const element = document.getElementById(id);
+    if (element && value != null) element.textContent = value;
+  };
+
+  setText("nextEventTitle", event.title);
+  setText("nextEventDate", event.event_date);
+  setText("nextEventTime", event.event_time);
+  setText("nextEventTheme", event.theme);
+  setText("nextEventDescription", event.description);
+  setText("nextEventLocation", event.location);
+  setText("nextEventLineup", event.lineup);
+
+  const image = document.getElementById("nextEventImage");
+  if (image && event.image_url) {
+    image.src = event.image_url;
+    image.alt = event.title || "Next event banner";
+  }
+
+  const details = document.getElementById("eventDetails");
+  if (details) {
+    details.replaceChildren();
+    [
+      ["Datum", event.event_date],
+      ["Zeit", event.event_time],
+      ["Theme", event.theme],
+      ["Location", event.location],
+      ["DJ-Lineup", event.lineup]
+    ].forEach(([label, value]) => {
+      if (!value) return;
+      const row = document.createElement("p");
+      const strong = document.createElement("strong");
+      strong.textContent = `${label}: `;
+      row.append(strong, document.createTextNode(value));
+      details.appendChild(row);
+    });
+  }
+}
+
+syncHomepageEventDetails();
