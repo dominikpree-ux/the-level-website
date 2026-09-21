@@ -12,6 +12,9 @@
     .staff-panel input, .staff-panel textarea { display:block; width:100%; box-sizing:border-box; margin:10px 0; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:rgba(0,0,0,.3); color:inherit; }
     .staff-panel textarea { min-height:90px; resize:vertical; }
     .staff-panel [hidden] { display:none !important; }
+    .application-card { margin:16px 0; padding:16px; border:1px solid rgba(255,255,255,.18); border-radius:12px; }
+    .application-card select { margin-top:10px; padding:10px; border-radius:8px; background:#111; color:inherit; }
+
   </style>
 </head>
 <body>
@@ -112,6 +115,14 @@
           <p id="dashboardWelcome"></p>
           <p id="dashboardStatus" class="muted"></p>
           <button class="button secondary" id="logoutButton" type="button">Ausloggen</button>
+        </div>
+
+        <div id="adminArea" hidden>
+          <h3>Admin-Bereich</h3>
+          <p class="muted">Nur für die konfigurierte Admin-E-Mail-Adresse.</p>
+          <button class="button primary" id="loadApplicationsButton" type="button">Bewerbungen laden</button>
+          <p id="adminMessage" class="muted" role="status"></p>
+          <div id="applicationsList"></div>
         </div>
       </div>
     </section>
