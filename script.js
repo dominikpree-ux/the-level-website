@@ -710,7 +710,8 @@ async function loadAdminEvents(user) {
     .order("event_date", { ascending: true });
 
   if (error) {
-    adminEventsList.textContent = error.message;
+    adminEventsList.textContent = `Fehler beim Laden der Events: ${error.message}`;
+    console.error("Admin events error:", error);
     return;
   }
 
@@ -781,10 +782,6 @@ async function loadAdminEvents(user) {
       save.disabled = false;
       await loadPublicEvents();
 
-/* Restore an already logged-in session after admin event/profile handlers exist. */
-supabaseClient.auth.getSession().then(({ data }) => {
-  if (data.session?.user) renderDashboard(data.session.user);
-});
     });
 
     const remove = document.createElement("button");
@@ -928,3 +925,8 @@ async function syncHomepageEventDetails() {
 }
 
 syncHomepageEventDetails();
+
+/* Restore an already logged-in session after all admin modules are initialized. */
+supabaseClient.auth.getSession().then(({ data }) => {
+  if (data.session?.user) renderDashboard(data.session.user);
+});
