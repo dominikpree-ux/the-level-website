@@ -511,6 +511,8 @@ createProfileButton?.addEventListener("click", async () => {
   if (!error) {
     ["newProfileUsername","newProfileRole","newProfileAvatar","newProfileDiscord","newProfileBio"]
       .forEach((id) => { document.getElementById(id).value = ""; });
+    const alignmentSelect = document.getElementById("newEventDescriptionAlign");
+    if (alignmentSelect) alignmentSelect.value = "left";
     await loadAdminProfiles(userData.user);
     await loadPublicStaffProfiles();
   }
@@ -662,6 +664,7 @@ async function loadAdminEvents(user) {
           lineup: lineup.value.trim(),
           image_url: image.value.trim(),
           description: description.value.trim(),
+          description_align: descriptionAlign.value,
           status: status.value
         })
         .eq("id", event.id);
@@ -684,7 +687,7 @@ async function loadAdminEvents(user) {
       await loadPublicEvents();
     });
 
-    card.append(title, date, time, theme, location, lineup, image, description, status, save, remove);
+    card.append(title, date, time, theme, location, lineup, image, description, descriptionAlign, status, save, remove);
     adminEventsList.appendChild(card);
   });
 }
@@ -705,6 +708,7 @@ createEventButton?.addEventListener("click", async () => {
     lineup: document.getElementById("newEventLineup").value.trim(),
     image_url: document.getElementById("newEventImage").value.trim(),
     description: document.getElementById("newEventDescription").value.trim(),
+    description_align: document.getElementById("newEventDescriptionAlign")?.value || "left",
     status: document.getElementById("newEventStatus").value
   };
 
@@ -743,7 +747,6 @@ showAdminArea = async function(user) {
 };
 
 loadPublicEvents();
-
 
 
 
