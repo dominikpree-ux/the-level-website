@@ -46,6 +46,13 @@
   
     .description-align-left { text-align: left; }
     .description-align-center { text-align: center; }
+
+.rich-editor-wrap{display:grid;gap:8px;margin:8px 0 14px}
+.rich-toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.rich-toolbar button,.rich-toolbar select{padding:6px 9px;border:1px solid rgba(255,255,255,.25);border-radius:6px;background:#171722;color:inherit;cursor:pointer}
+.rich-editor{min-height:150px;padding:12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(0,0,0,.18);color:inherit;outline:none;white-space:pre-wrap}
+.rich-editor img{max-width:100%;height:auto;border-radius:8px}
+.rich-editor:empty:before{content:attr(data-placeholder);opacity:.5}
 </style>
 </head>
 <body>
