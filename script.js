@@ -66,12 +66,16 @@ const applicationArea = document.getElementById("applicationArea");
 const dashboardArea = document.getElementById("dashboardArea");
 const authMessage = document.getElementById("authMessage");
 const applicationMessageStatus = document.getElementById("applicationMessageStatus");
+const profileArea = document.getElementById("profileArea");
+const profileMessage = document.getElementById("profileMessage");
+const profileRoleInfo = document.getElementById("profileRoleInfo");
 
 function showStaffPanel(area) {
   staffPanel.hidden = false;
   authArea.hidden = area !== "auth";
   applicationArea.hidden = area !== "application";
   dashboardArea.hidden = area !== "dashboard";
+  if (profileArea) profileArea.hidden = area !== "dashboard";
   if (adminArea) adminArea.hidden = true;
   staffPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -105,7 +109,7 @@ async function renderDashboard(user) {
   await showAdminArea(user);
   const { data, error } = await supabaseClient
     .from("staff_profiles")
-    .select("username, role, status")
+    .select("username, role, status, avatar_url, bio, discord_name")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -122,7 +126,40 @@ async function renderDashboard(user) {
 
   document.getElementById("dashboardStatus").textContent =
     `Rolle: ${data.role || "Noch nicht zugewiesen"} · Status: ${data.status || "pending"}`;
+
+  document.getElementById("profileUsername").value = data.username || "";
+  document.getElementById("profileImageUrl").value = data.avatar_url || "";
+  document.getElementById("profileDiscord").value = data.discord_name || "";
+  document.getElementById("profileBio").value = data.bio || "";
+  profileRoleInfo.textContent = `Zugewiesene Rolle: ${data.role || "Noch nicht zugewiesen"} · Status: ${data.status || "pending"}`;
 }
+
+
+document.getElementById("saveProfileButton")?.addEventListener("click", async () => {
+  const { data: userData } = await supabaseClient.auth.getUser();
+  const user = userData?.user;
+  if (!user) {
+    profileMessage.textContent = "Bitte zuerst einloggen.";
+    return;
+  }
+
+  profileMessage.textContent = "Profil wird gespeichert...";
+  const payload = {
+    username: document.getElementById("profileUsername").value.trim(),
+    avatar_url: document.getElementById("profileImageUrl").value.trim(),
+    discord_name: document.getElementById("profileDiscord").value.trim(),
+    bio: document.getElementById("profileBio").value.trim()
+  };
+
+  const { error } = await supabaseClient
+    .from("staff_profiles")
+    .update(payload)
+    .eq("id", user.id);
+
+  profileMessage.textContent = error
+    ? error.message
+    : "Profil erfolgreich gespeichert.";
+});
 
 document.getElementById("logoutButton")?.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
