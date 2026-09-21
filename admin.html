@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The LEVƎ⅃ — Admin Builder</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="admin.css"></head>
+<body class="admin-body">
+<header class="admin-top"><strong>THE LEVƎ⅃ / ADMIN BUILDER</strong><div><button id="saveBtn">Speichern</button><button id="previewBtn">Vorschau</button></div></header>
+<main class="builder">
+<aside class="palette"><h2>Elemente</h2><p>Ziehe Elemente auf die Arbeitsfläche.</p>
+<div class="palette-item" draggable="true" data-type="heading">Überschrift</div>
+<div class="palette-item" draggable="true" data-type="text">Text</div>
+<div class="palette-item" draggable="true" data-type="button">Button</div>
+<div class="palette-item" draggable="true" data-type="image">Bild</div>
+<div class="palette-item" draggable="true" data-type="section">Bereich</div>
+<button id="clearBtn" class="danger">Arbeitsfläche leeren</button></aside>
+<section class="canvas-wrap"><div id="canvas" class="canvas" aria-label="Arbeitsfläche"></div></section>
+<aside class="inspector"><h2>Eigenschaften</h2><div id="emptyInspector">Wähle ein Element aus.</div><div id="fields" hidden>
+<label>Text / Inhalt<textarea id="content"></textarea></label>
+<label>Bild-URL<input id="src" type="url"></label>
+<label>Farbe<input id="color" type="color" value="#ff1493"></label>
+<label>Schriftgröße<input id="size" type="range" min="10" max="80" value="28"></label>
+<button id="deleteBtn" class="danger">Element löschen</button></div></aside>
+</main><script src="admin.js"></script></body></html>
