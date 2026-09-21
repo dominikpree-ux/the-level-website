@@ -368,9 +368,7 @@ document.getElementById("loadApplicationsButton")?.addEventListener("click", asy
   await loadApplications(data.user);
 });
 
-supabaseClient.auth.getSession().then(({ data }) => {
-  if (data.session?.user) renderDashboard(data.session.user);
-});
+/* Initial session is restored after all admin modules are initialized. */
 
 loadPublicStaffProfiles();
 
@@ -716,18 +714,18 @@ async function loadAdminEvents(user) {
     return;
   }
 
-  (data || []).forEach((event) => {
+  if (!data || data.length === 0) {
+    adminEventsList.textContent = "Keine Events gefunden.";
+    return;
+  }
+
+  data.forEach((event) => {
     const card = document.createElement("article");
     card.className = "admin-event-card";
 
     const heading = document.createElement("h4");
-    heading.textContent = `Event bearbeiten: ${event.title || "Unbenanntes Event"}`;
+    heading.textContent = event.title || "Unbenanntes Event";
     card.appendChild(heading);
-
-    const editHint = document.createElement("p");
-    editHint.className = "muted";
-    editHint.textContent = "Felder ändern und anschließend „Speichern“ klicken.";
-    card.appendChild(editHint);
 
     const title = eventInput("Event-Titel", event.title);
     const date = eventInput("Datum", event.event_date, "date");
@@ -781,8 +779,12 @@ async function loadAdminEvents(user) {
 
       adminMessage.textContent = updateError ? updateError.message : "Event gespeichert.";
       save.disabled = false;
-      await loadAdminEvents(user);
       await loadPublicEvents();
+
+/* Restore an already logged-in session after admin event/profile handlers exist. */
+supabaseClient.auth.getSession().then(({ data }) => {
+  if (data.session?.user) renderDashboard(data.session.user);
+});
     });
 
     const remove = document.createElement("button");
