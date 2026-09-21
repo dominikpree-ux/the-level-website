@@ -274,6 +274,9 @@ async function showAdminArea(user) {
     return;
   }
   adminArea.hidden = false;
+  const eventsArea = document.getElementById("adminEventsArea");
+  if (eventsArea) eventsArea.hidden = false;
+  if (typeof loadAdminEvents === "function") await loadAdminEvents(user);
 }
 
 async function loadApplications(user) {
@@ -557,7 +560,7 @@ function makeRichEditor(textarea, initialValue = "") {
     button("→", "justifyRight"),
     button("• Liste", "insertUnorderedList"),
     button("1. Liste", "insertOrderedList"),
-    button("🔗 Link", "createLink", prompt("Link-URL:") || "")
+    button("🔗 Link", "createLink")
   );
   const size = document.createElement("select");
   size.innerHTML = '<option value="">Schriftgröße</option><option value="2">Klein</option><option value="3">Normal</option><option value="5">Groß</option><option value="7">Sehr groß</option>';
@@ -568,6 +571,18 @@ function makeRichEditor(textarea, initialValue = "") {
     textarea.value = editor.innerHTML;
     size.value = "";
   });
+  const linkButton = document.createElement("button");
+  linkButton.type = "button";
+  linkButton.textContent = "🔗 Link";
+  linkButton.addEventListener("click", () => {
+    const url = prompt("Link-URL einfügen:");
+    if (!url) return;
+    editor.focus();
+    document.execCommand("createLink", false, url);
+    textarea.value = editor.innerHTML;
+  });
+  toolbar.append(linkButton);
+
   toolbar.append(size);
 
   const image = document.createElement("button");
