@@ -37,16 +37,12 @@
     .admin-profile-card input, .admin-profile-card textarea, .admin-profile-card select { display:block; width:100%; box-sizing:border-box; margin:8px 0; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:#111; color:inherit; }
 
   
-    /* Symmetrische, mittig ausgerichtete Event-Beschreibung */
+    /* Leichte Anpassung der ursprünglichen Event-Beschreibung */
     .next-event-description {
-      max-width: 680px;
-      margin: 14px auto 18px;
-      text-align: center;
-      line-height: 1.7;
-      text-wrap: balance;
+      max-width: 560px;
+      margin: 10px 0 16px;
+      line-height: 1.6;
     }
-    .event-info { text-align: center; }
-    .event-info .eyebrow, .event-info h3, .event-info p { margin-left: auto; margin-right: auto; }
   </style>
 </head>
 <body>
@@ -106,9 +102,16 @@
           <p class="eyebrow" data-i18n="nextEventLabel">NEXT EVENT</p>
           <h3 id="nextEventTitle" data-i18n="eventTitle">Grand Opening — Level 1</h3>
           <p id="nextEventDescription" class="next-event-description" data-i18n="eventDetails">6:00 PM ST · DJ Lineup · The LƎVE⅃</p>
-          <a class="button primary" href="#" data-i18n="eventDetailsButton">Event Details</a>
+          <a id="nextEventDetailsButton" class="button primary" href="#next-event-details" data-i18n="eventDetailsButton">Event Details</a>
         </div>
       </article>
+
+      <section id="next-event-details" class="next-event-details" aria-labelledby="next-event-details-title">
+        <p class="eyebrow">EVENT DETAILS</p>
+        <h3 id="next-event-details-title">Event details</h3>
+        <p id="next-event-details-description" class="next-event-description">Details are loading...</p>
+        <div id="eventDetails" class="event-details-list"></div>
+      </section>
 
       <div class="event-admin-public-list">
         <h3>Upcoming Events</h3>
