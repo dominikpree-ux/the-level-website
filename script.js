@@ -55,6 +55,78 @@ toggle.addEventListener("click", () => {
 renderLanguage();
 
 
+
+/* Public approved staff directory */
+const publicStaffList = document.getElementById("publicStaffList");
+
+function createStaffCard(profile) {
+  const card = document.createElement("article");
+  card.className = "public-staff-card";
+
+  const image = document.createElement("img");
+  image.src = profile.avatar_url || "assets/character.png";
+  image.alt = `${profile.username || "Staff"} profile picture`;
+  image.loading = "lazy";
+  image.onerror = () => {
+    image.src = "assets/character.png";
+  };
+
+  const name = document.createElement("h3");
+  name.textContent = profile.username || "The LƎVE⅃ Staff";
+
+  const role = document.createElement("div");
+  role.className = "staff-role";
+  role.textContent = profile.role || "Staff";
+
+  const bio = document.createElement("p");
+  bio.className = "staff-bio";
+  bio.textContent = profile.bio || "A valued member of The LƎVE⅃ team.";
+
+  card.append(image, name, role, bio);
+
+  if (profile.discord_name) {
+    const discord = document.createElement("p");
+    discord.className = "muted";
+    discord.textContent = `Discord: ${profile.discord_name}`;
+    card.appendChild(discord);
+  }
+
+  return card;
+}
+
+async function loadPublicStaffProfiles() {
+  if (!publicStaffList) return;
+
+  const { data, error } = await supabaseClient
+    .from("staff_profiles")
+    .select("username, role, avatar_url, bio, discord_name, status")
+    .eq("status", "approved")
+    .order("username", { ascending: true });
+
+  publicStaffList.replaceChildren();
+
+  if (error) {
+    const errorMessage = document.createElement("p");
+    errorMessage.className = "public-staff-empty";
+    errorMessage.textContent = "Staff profiles could not be loaded right now.";
+    publicStaffList.appendChild(errorMessage);
+    console.error("Public staff profile error:", error);
+    return;
+  }
+
+  if (!data?.length) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "public-staff-empty";
+    emptyMessage.textContent = "Approved staff profiles will appear here soon.";
+    publicStaffList.appendChild(emptyMessage);
+    return;
+  }
+
+  data.forEach((profile) => {
+    publicStaffList.appendChild(createStaffCard(profile));
+  });
+}
+
 /* The LEVƎ⅃ Staff Authentication */
 const SUPABASE_URL = "https://uhwtdiyjkyjtpipikolh.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVod3RkaXlqa3lqdHBpcGlrb2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5OTUzNDQsImV4cCI6MjEwNTU3MTM0NH0.9TOFWL_NcR1Iluw74YWPEYixJEh-hQ-rbxrfZ3T7Mu0";
@@ -299,3 +371,5 @@ document.getElementById("loadApplicationsButton")?.addEventListener("click", asy
 supabaseClient.auth.getSession().then(({ data }) => {
   if (data.session?.user) renderDashboard(data.session.user);
 });
+
+loadPublicStaffProfiles();
