@@ -637,6 +637,9 @@ async function loadAdminEvents(user) {
     const description = document.createElement("textarea");
     description.placeholder = "Beschreibung";
     description.value = event.description || "";
+    const descriptionAlign = document.createElement("select");
+    descriptionAlign.innerHTML = '<option value="left">Linksbündig</option><option value="center">Zentriert</option>';
+    descriptionAlign.value = event.description_align || "left";
 
     const status = document.createElement("select");
     ["published", "draft"].forEach((value) => {
