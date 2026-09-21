@@ -929,3 +929,45 @@ async function syncHomepageEventDetails() {
 }
 
 syncHomepageEventDetails();
+
+/* Public staff card size selector */
+(() => {
+  const staffGrid = document.getElementById("publicStaffList");
+  const sizeButtons = Array.from(document.querySelectorAll("[data-staff-size]"));
+  if (!staffGrid || !sizeButtons.length) return;
+
+  const storageKey = "the-level-staff-card-size";
+  const allowedSizes = ["compact", "standard", "wide"];
+
+  function applyStaffCardSize(size) {
+    const selectedSize = allowedSizes.includes(size) ? size : "standard";
+    staffGrid.classList.remove("staff-size-compact", "staff-size-standard", "staff-size-wide");
+    staffGrid.classList.add(`staff-size-${selectedSize}`);
+
+    sizeButtons.forEach((button) => {
+      const isActive = button.dataset.staffSize === selectedSize;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    try {
+      window.localStorage.setItem(storageKey, selectedSize);
+    } catch (error) {
+      console.warn("Could not save staff card size preference:", error);
+    }
+  }
+
+  let savedSize = "standard";
+  try {
+    savedSize = window.localStorage.getItem(storageKey) || "standard";
+  } catch (error) {
+    console.warn("Could not read staff card size preference:", error);
+  }
+
+  sizeButtons.forEach((button) => {
+    button.addEventListener("click", () => applyStaffCardSize(button.dataset.staffSize));
+  });
+
+  applyStaffCardSize(savedSize);
+})();
+
