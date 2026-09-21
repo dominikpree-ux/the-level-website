@@ -53,3 +53,97 @@ toggle.addEventListener("click", () => {
   renderLanguage();
 });
 renderLanguage();
+
+
+/* The LEVƎ⅃ Staff Authentication */
+const SUPABASE_URL = "https://uhwtdiyjkyjtpipikolh.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVod3RkaXlqa3lqdHBpcGlrb2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5OTUzNDQsImV4cCI6MjEwNTU3MTM0NH0.9TOFWL_NcR1Iluw74YWPEYixJEh-hQ-rbxrfZ3T7Mu0";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const staffPanel = document.getElementById("staffPanel");
+const authArea = document.getElementById("authArea");
+const applicationArea = document.getElementById("applicationArea");
+const dashboardArea = document.getElementById("dashboardArea");
+const authMessage = document.getElementById("authMessage");
+const applicationMessageStatus = document.getElementById("applicationMessageStatus");
+
+function showStaffPanel(area) {
+  staffPanel.hidden = false;
+  authArea.hidden = area !== "auth";
+  applicationArea.hidden = area !== "application";
+  dashboardArea.hidden = area !== "dashboard";
+  staffPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+document.getElementById("openLoginButton")?.addEventListener("click", () => showStaffPanel("auth"));
+document.getElementById("openApplicationButton")?.addEventListener("click", () => showStaffPanel("application"));
+
+document.getElementById("registerButton")?.addEventListener("click", async () => {
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  authMessage.textContent = "Registrierung läuft...";
+  const { error } = await supabaseClient.auth.signUp({ email, password });
+  authMessage.textContent = error ? error.message : "Registrierung erfolgreich. Prüfe deine E-Mail.";
+});
+
+document.getElementById("loginButton")?.addEventListener("click", async () => {
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  authMessage.textContent = "Anmeldung läuft...";
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    authMessage.textContent = error.message;
+    return;
+  }
+  await renderDashboard(data.user);
+});
+
+async function renderDashboard(user) {
+  showStaffPanel("dashboard");
+  document.getElementById("dashboardWelcome").textContent = `Angemeldet als: ${user.email}`;
+  const { data, error } = await supabaseClient
+    .from("staff_profiles")
+    .select("username, role, status")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    document.getElementById("dashboardStatus").textContent = error.message;
+    return;
+  }
+
+  if (!data) {
+    document.getElementById("dashboardStatus").textContent =
+      "Dein Konto ist angelegt. Dein Staff-Profil wird nach der Freischaltung durch einen Admin sichtbar.";
+    return;
+  }
+
+  document.getElementById("dashboardStatus").textContent =
+    `Rolle: ${data.role || "Noch nicht zugewiesen"} · Status: ${data.status || "pending"}`;
+}
+
+document.getElementById("logoutButton")?.addEventListener("click", async () => {
+  await supabaseClient.auth.signOut();
+  showStaffPanel("auth");
+  authMessage.textContent = "Du wurdest ausgeloggt.";
+});
+
+document.getElementById("submitApplicationButton")?.addEventListener("click", async () => {
+  const payload = {
+    name: document.getElementById("applicationName").value.trim(),
+    email: document.getElementById("applicationEmail").value.trim(),
+    desired_role: document.getElementById("applicationRole").value.trim(),
+    experience: document.getElementById("applicationExperience").value.trim(),
+    message: document.getElementById("applicationMessage").value.trim()
+  };
+
+  applicationMessageStatus.textContent = "Bewerbung wird gesendet...";
+  const { error } = await supabaseClient.from("staff_applications").insert(payload);
+  applicationMessageStatus.textContent = error
+    ? error.message
+    : "Danke! Deine Bewerbung wurde erfolgreich übermittelt.";
+});
+
+supabaseClient.auth.getSession().then(({ data }) => {
+  if (data.session?.user) renderDashboard(data.session.user);
+});
