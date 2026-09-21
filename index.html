@@ -6,6 +6,13 @@
   <title>The LƎVE⅃ — Final Fantasy XIV Nightclub</title>
   <meta name="description" content="The LƎVE⅃ — music, people, fantasy, no limits." />
   <link rel="stylesheet" href="style.css" />
+<style>
+    .staff-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
+    .staff-panel { max-width:620px; margin-top:24px; padding:24px; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(0,0,0,.22); }
+    .staff-panel input, .staff-panel textarea { display:block; width:100%; box-sizing:border-box; margin:10px 0; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:rgba(0,0,0,.3); color:inherit; }
+    .staff-panel textarea { min-height:90px; resize:vertical; }
+    .staff-panel [hidden] { display:none !important; }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -72,8 +79,41 @@
     <section id="staff" class="section feature-section">
       <p class="eyebrow" data-i18n="staffEyebrow">BECOME PART OF IT</p>
       <h2 data-i18n="staffTitle">Join the team.</h2>
-      <p data-i18n="staffText">We are looking for friendly, reliable and creative people for our club team. Applications and staff tools will be connected in the next version.</p>
-      <a class="button secondary" href="#" data-i18n="applyButton">Staff Application</a>
+      <p data-i18n="staffText">We are looking for friendly, reliable and creative people for our club team.</p>
+      <div class="staff-actions">
+        <button class="button primary" id="openLoginButton" type="button">Staff Login</button>
+        <button class="button secondary" id="openApplicationButton" type="button">Staff Application</button>
+      </div>
+      <div id="staffPanel" class="staff-panel" hidden>
+        <div id="authArea">
+          <h3>Staff Login / Registration</h3>
+          <input id="authEmail" type="email" placeholder="E-Mail" autocomplete="email" />
+          <input id="authPassword" type="password" placeholder="Passwort" autocomplete="current-password" />
+          <div class="staff-actions">
+            <button class="button primary" id="loginButton" type="button">Einloggen</button>
+            <button class="button secondary" id="registerButton" type="button">Registrieren</button>
+          </div>
+          <p id="authMessage" class="muted" role="status"></p>
+        </div>
+
+        <div id="applicationArea" hidden>
+          <h3>Staff-Bewerbung</h3>
+          <input id="applicationName" type="text" placeholder="Name / Charaktername" />
+          <input id="applicationEmail" type="email" placeholder="E-Mail" />
+          <input id="applicationRole" type="text" placeholder="Gewünschte Rolle" />
+          <textarea id="applicationExperience" placeholder="Erfahrung"></textarea>
+          <textarea id="applicationMessage" placeholder="Warum möchtest du Teil des Teams werden?"></textarea>
+          <button class="button primary" id="submitApplicationButton" type="button">Bewerbung senden</button>
+          <p id="applicationMessageStatus" class="muted" role="status"></p>
+        </div>
+
+        <div id="dashboardArea" hidden>
+          <h3>Staff Dashboard</h3>
+          <p id="dashboardWelcome"></p>
+          <p id="dashboardStatus" class="muted"></p>
+          <button class="button secondary" id="logoutButton" type="button">Ausloggen</button>
+        </div>
+      </div>
     </section>
 
     <section id="gallery" class="section">
@@ -97,6 +137,7 @@
     <img src="assets/logo-white.png" alt="The LƎVE⅃ logo" />
     <p>© 2026 The LƎVE⅃ · Not affiliated with Square Enix.</p>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
 </html>
