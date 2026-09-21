@@ -14,3 +14,47 @@ document.querySelector("#saveBtn").onclick=()=>{localStorage.setItem("level-buil
 document.querySelector("#clearBtn").onclick=()=>{if(confirm("Arbeitsfläche leeren?")){elements=[];selected=null;render();}};
 document.querySelector("#previewBtn").onclick=()=>window.open("index.html","_blank");
 render();
+/* Real website content editor */
+const contentFields = document.querySelector("#contentFields");
+const contentStatus = document.querySelector("#contentStatus");
+let websiteContent = null;
+async function initContentEditor() {
+  if (!contentFields) return;
+  try {
+    const response = await fetch("content.json", { cache: "no-store" });
+    websiteContent = await response.json();
+    for (const lang of ["en", "de"]) {
+      const group = document.createElement("fieldset");
+      const legend = document.createElement("legend");
+      legend.textContent = lang.toUpperCase();
+      group.appendChild(legend);
+      Object.entries(websiteContent.translations[lang] || {}).forEach(([key, value]) => {
+        const label = document.createElement("label");
+        label.className = "content-field";
+        label.textContent = key;
+        const input = document.createElement("textarea");
+        input.value = value;
+        input.rows = 2;
+        input.addEventListener("input", () => {
+          websiteContent.translations[lang][key] = input.value;
+          contentStatus.textContent = "Änderungen bereit zum Export.";
+        });
+        label.appendChild(input);
+        group.appendChild(label);
+      });
+      contentFields.appendChild(group);
+    }
+  } catch (error) {
+    contentStatus.textContent = "content.json konnte nicht geladen werden.";
+  }
+}
+document.querySelector("#exportContentBtn")?.addEventListener("click", () => {
+  if (!websiteContent) return;
+  const blob = new Blob([JSON.stringify(websiteContent, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url; link.download = "content.json"; link.click();
+  URL.revokeObjectURL(url);
+  contentStatus.textContent = "Export erstellt. Lade die Datei in GitHub hoch.";
+});
+initContentEditor();

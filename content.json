@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "translations": {
+    "en": {
+      "navHome": "Home",
+      "navEvents": "Events",
+      "navStaff": "Staff",
+      "navGallery": "Gallery",
+      "navAbout": "About",
+      "discordButton": "Join Discord",
+      "eyebrow": "FINAL FANTASY XIV NIGHTCLUB",
+      "heroSubtitle": "More than a club. A higher experience.",
+      "nextEvent": "Next Event",
+      "discover": "Discover The LEVÆâ",
+      "location": "Light Â· Raiden Â· Empyreum Â· Ward 2 Â· Plot 60",
+      "quickEvents": "Events",
+      "quickEventsSub": "Upcoming nights",
+      "quickStaff": "Staff",
+      "quickStaffSub": "Join our team",
+      "quickGallery": "Gallery",
+      "quickGallerySub": "Moments & Gpose",
+      "quickAbout": "About",
+      "quickAboutSub": "Our story",
+      "welcomeEyebrow": "WELCOME TO",
+      "welcomeTitle": "A different level of nightlife.",
+      "welcomeText": "The LEVÆâ is a Final Fantasy XIV nightclub built for unforgettable nights, great people, music, atmosphere and a welcoming community.",
+      "welcomeTextDe": "Immerse yourself in music, atmosphere and a world where fantasy meets reality.",
+      "moreAbout": "More about us â",
+      "nextEventLabel": "NEXT EVENT",
+      "eventTitle": "Grand Opening â Level 1",
+      "eventDetails": "6:00 PM ST Â· DJ Lineup Â· The LEVÆâ",
+      "eventDetailsButton": "Event Details",
+      "staffEyebrow": "BECOME PART OF IT",
+      "staffTitle": "Join the team.",
+      "staffText": "We are looking for friendly, reliable and creative people for our club team. Applications and staff tools will be connected in the next version.",
+      "applyButton": "Staff Application",
+      "galleryEyebrow": "FEATURED IMPRESSIONS",
+      "galleryTitle": "Moments after dark.",
+      "aboutEyebrow": "THE LEVÆâ",
+      "aboutTitle": "Same night. Different level.",
+      "aboutText": "A place for music, friendship, fantasy and expressive characters. Everyone is welcome to enjoy the atmosphere and create memories together."
+    },
+    "de": {
+      "navHome": "Start",
+      "navEvents": "Events",
+      "navStaff": "Team",
+      "navGallery": "Galerie",
+      "navAbout": "Ãber uns",
+      "discordButton": "Discord beitreten",
+      "eyebrow": "FINAL FANTASY XIV NACHTCLUB",
+      "heroSubtitle": "Mehr als ein Club. Ein hÃ¶heres Erlebnis.",
+      "nextEvent": "NÃ¤chstes Event",
+      "discover": "The LEVÆâ entdecken",
+      "location": "Light Â· Raiden Â· Empyreum Â· Bezirk 2 Â· GrundstÃ¼ck 60",
+      "quickEvents": "Events",
+      "quickEventsSub": "Kommende NÃ¤chte",
+      "quickStaff": "Team",
+      "quickStaffSub": "Werde Teil davon",
+      "quickGallery": "Galerie",
+      "quickGallerySub": "Momente & Gpose",
+      "quickAbout": "Ãber uns",
+      "quickAboutSub": "Unsere Geschichte",
+      "welcomeEyebrow": "WILLKOMMEN BEI",
+      "welcomeTitle": "Nachtleben auf einem anderen Level.",
+      "welcomeText": "The LEVÆâ ist ein Final-Fantasy-XIV-Nachtclub fÃ¼r unvergessliche NÃ¤chte, groÃartige Menschen, Musik, AtmosphÃ¤re und eine offene Community.",
+      "welcomeTextDe": "Tauche ein in Musik, AtmosphÃ¤re und eine Welt, in der Fantasie auf RealitÃ¤t trifft.",
+      "moreAbout": "Mehr Ã¼ber uns â",
+      "nextEventLabel": "NÃCHSTES EVENT",
+      "eventTitle": "Grand Opening â Level 1",
+      "eventDetails": "18:00 ST Â· DJ-Lineup Â· The LEVÆâ",
+      "eventDetailsButton": "Event-Details",
+      "staffEyebrow": "WERDE TEIL DAVON",
+      "staffTitle": "Werde Teil unseres Teams.",
+      "staffText": "Wir suchen freundliche, zuverlÃ¤ssige und kreative Menschen fÃ¼r unser Club-Team. Bewerbungen und Staff-Werkzeuge werden in der nÃ¤chsten Version integriert.",
+      "applyButton": "Staff-Bewerbung",
+      "galleryEyebrow": "EINBLICKE",
+      "galleryTitle": "Momente nach Einbruch der Dunkelheit.",
+      "aboutEyebrow": "THE LEVÆâ",
+      "aboutTitle": "Die gleiche Nacht. Ein anderes Level.",
+      "aboutText": "Ein Ort fÃ¼r Musik, Freundschaft, Fantasie und ausdrucksstarke Charaktere. Jeder ist willkommen, die AtmosphÃ¤re zu genieÃen und gemeinsam Erinnerungen zu schaffen."
+    }
+  }
+}

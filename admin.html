@@ -2,7 +2,13 @@
 <html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The LEVƎ⅃ — Admin Builder</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="admin.css"></head>
 <body class="admin-body">
-<header class="admin-top"><strong>THE LEVƎ⅃ / ADMIN BUILDER</strong><div><button id="saveBtn">Speichern</button><button id="previewBtn">Vorschau</button></div></header>
+<header class="admin-top"><strong>THE LEVƎ⅃ / ADMIN BUILDER</strong><div><button id="exportContentBtn">content.json exportieren</button><button id="previewBtn">Vorschau</button></div></header>
+<section class="content-editor">
+<h2>Website-Inhalte bearbeiten</h2>
+<p>Ändere die Texte der echten Website. Danach <b>content.json exportieren</b> und die Datei im GitHub-Projekt ersetzen.</p>
+<div id="contentFields"></div>
+<p id="contentStatus" class="muted"></p>
+</section>
 <main class="builder">
 <aside class="palette"><h2>Elemente</h2><p>Ziehe Elemente auf die Arbeitsfläche.</p>
 <div class="palette-item" draggable="true" data-type="heading">Überschrift</div>

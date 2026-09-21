@@ -52,7 +52,21 @@ toggle.addEventListener("click", () => {
   language = language === "en" ? "de" : "en";
   renderLanguage();
 });
-renderLanguage();
+async function loadContentOverrides() {
+  try {
+    const response = await fetch("content.json", { cache: "no-store" });
+    if (response.ok) {
+      const overrides = await response.json();
+      for (const lang of ["en", "de"]) {
+        Object.assign(translations[lang], overrides.translations?.[lang] || {});
+      }
+    }
+  } catch (error) {
+    console.warn("Content overrides could not be loaded.", error);
+  }
+  renderLanguage();
+}
+loadContentOverrides();
 
 
 
