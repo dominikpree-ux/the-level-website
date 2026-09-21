@@ -304,3 +304,163 @@ footer img { width: 105px; }
   .quick-links{grid-template-columns:1fr 1fr;padding:10px}
   .quick-links a{padding:14px}
 }
+
+/* =========================================================
+   CYBERPUNK HERO V2 — larger, layered and intentionally asymmetric
+   ========================================================= */
+:root{
+  --cp-pink:#ff169d;
+  --cp-cyan:#39efff;
+  --cp-violet:#8d3dff;
+  --cp-black:#03040a;
+}
+
+.site-header{
+  min-height:88px;
+  padding:12px clamp(24px,4vw,72px);
+  background:
+    linear-gradient(90deg,rgba(2,3,9,.97),rgba(8,5,18,.76) 52%,rgba(2,3,9,.94)),
+    repeating-linear-gradient(90deg,transparent 0 110px,rgba(255,22,157,.055) 111px 112px);
+  border-bottom:1px solid rgba(255,22,157,.45);
+  box-shadow:0 8px 40px rgba(0,0,0,.4),0 1px 0 rgba(57,239,255,.18) inset;
+}
+.site-header::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-3px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cp-cyan),var(--cp-pink),transparent);
+  opacity:.7;
+}
+.brand img{width:178px;max-height:58px;filter:drop-shadow(0 0 12px rgba(255,22,157,.35));}
+.site-header nav{gap:clamp(20px,2.2vw,38px);font-size:12px;letter-spacing:.13em;}
+.site-header nav a{padding:22px 0;text-shadow:0 0 12px rgba(255,255,255,.12);}
+.site-header nav a:hover{color:var(--cp-cyan);}
+.header-actions{gap:20px;}
+.social-links{gap:18px;font-size:22px;}
+.discord-button{padding:16px 28px;font-size:12px;border-color:var(--cp-pink);box-shadow:0 0 18px rgba(255,22,157,.3),inset 0 0 18px rgba(255,22,157,.07);}
+
+.hero{
+  min-height:clamp(760px,88vh,980px);
+  padding-top:88px;
+  isolation:isolate;
+  background:
+    linear-gradient(90deg,rgba(3,4,10,.98) 0%,rgba(3,4,10,.78) 26%,rgba(3,4,10,.18) 57%,rgba(3,4,10,.1) 100%),
+    linear-gradient(0deg,rgba(3,4,10,1) 0%,rgba(3,4,10,.18) 23%,transparent 60%),
+    radial-gradient(ellipse at 70% 35%,rgba(255,22,157,.22),transparent 36%),
+    url('assets/character.png') 72% 42% / cover no-repeat;
+}
+.hero::before{
+  content:"";
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 0 22%,rgba(57,239,255,.08) 22.1% 22.2%,transparent 22.3% 74%,rgba(255,22,157,.1) 74.1% 74.25%,transparent 74.35%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 5px),
+    linear-gradient(115deg,transparent 0 49%,rgba(255,22,157,.22) 49.1% 49.25%,transparent 49.4%);
+  mix-blend-mode:screen;
+  opacity:.75;
+}
+.hero::after{
+  content:"";
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 0 9%,rgba(255,22,157,.85) 9% 9.12%,transparent 9.12% 90%,rgba(57,239,255,.65) 90% 90.12%,transparent 90.12%),
+    linear-gradient(180deg,transparent 0 14%,rgba(57,239,255,.45) 14% 14.12%,transparent 14.12% 83%,rgba(255,22,157,.5) 83% 83.12%,transparent 83.12%);
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
+  opacity:.45;
+}
+.hero-overlay{
+  z-index:0;
+  background:
+    radial-gradient(ellipse at 78% 38%,rgba(255,22,157,.22),transparent 31%),
+    radial-gradient(ellipse at 58% 72%,rgba(57,239,255,.12),transparent 30%),
+    linear-gradient(135deg,transparent 0 45%,rgba(141,61,255,.12) 45.2% 46%,transparent 46.2%),
+    linear-gradient(0deg,var(--bg),transparent 30%);
+}
+.hero-content{
+  z-index:2;
+  width:min(720px,48vw);
+  margin-left:clamp(6vw,10vw,180px);
+  padding-top:clamp(30px,7vh,90px);
+  transform:translateY(-2%);
+}
+.hero-content::before{
+  content:"// NIGHTLIFE SYSTEM ONLINE";
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin-bottom:24px;
+  padding:8px 14px;
+  color:var(--cp-cyan);
+  border-left:2px solid var(--cp-cyan);
+  border-top:1px solid rgba(57,239,255,.4);
+  border-bottom:1px solid rgba(57,239,255,.18);
+  background:linear-gradient(90deg,rgba(57,239,255,.08),transparent);
+  font-family:Orbitron,sans-serif;
+  font-size:10px;
+  letter-spacing:.22em;
+}
+.eyebrow{font-size:11px;letter-spacing:.42em;color:#f7d8f1;}
+.hero-logo{width:min(590px,100%);max-height:none;filter:drop-shadow(0 0 12px rgba(255,22,157,.45)) drop-shadow(0 0 34px rgba(57,239,255,.16));}
+.hero-subtitle{font-size:clamp(12px,1vw,16px);letter-spacing:.27em;margin-top:20px;text-shadow:0 0 14px rgba(255,22,157,.35);}
+.hero-tags{margin:30px 0;gap:12px;font-size:11px;letter-spacing:.28em;}
+.hero-actions{gap:16px;}
+.hero-actions .button{padding:16px 25px;font-size:11px;}
+.location{right:clamp(30px,5vw,90px);bottom:38px;font-size:10px;letter-spacing:.18em;}
+
+/* Angular HUD brackets and side data rails */
+.hero-content::after{
+  content:"MUSIC / DRINKS / FRIENDS / GPOSE / EVENTS / AND MORE...";
+  position:absolute;
+  left:-clamp(45px,5vw,90px);
+  top:48%;
+  width:190px;
+  padding:14px 0 14px 16px;
+  border-left:2px solid var(--cp-cyan);
+  color:rgba(255,255,255,.7);
+  font-size:9px;
+  line-height:2.5;
+  letter-spacing:.2em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  opacity:.85;
+}
+
+.quick-links{position:relative;z-index:3;margin-top:0;background:rgba(3,4,10,.9);border-color:rgba(255,22,157,.28);}
+.quick-links a{min-height:112px;padding:26px clamp(20px,3vw,48px);background:linear-gradient(135deg,rgba(14,15,28,.96),rgba(4,5,12,.96));border-right:1px solid rgba(57,239,255,.08);position:relative;overflow:hidden;}
+.quick-links a::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 0 72%,rgba(255,22,157,.09) 72% 73%,transparent 73%);}
+.quick-links a:hover{background:linear-gradient(135deg,rgba(36,12,39,.98),rgba(4,5,12,.98));}
+.quick-links strong{font-size:12px;color:var(--cp-cyan);}
+.quick-links span{font-size:13px;letter-spacing:.18em;}
+.quick-links small{font-size:10px;letter-spacing:.08em;}
+
+@media (max-width:1100px){
+  .site-header nav{gap:16px;font-size:10px;}
+  .brand img{width:145px;}
+  .header-actions{gap:10px;}
+  .social-links{gap:10px;font-size:18px;}
+  .discord-button{padding:13px 17px;font-size:10px;}
+  .hero{background-position:70% 42%;}
+  .hero-content{width:min(650px,54vw);margin-left:7vw;}
+  .hero-content::after{display:none;}
+}
+@media (max-width:900px){
+  .site-header{min-height:76px;}
+  .hero{min-height:760px;background-position:66% center;}
+  .hero-content{width:72vw;margin-left:7vw;padding-top:50px;}
+  .hero-logo{width:min(520px,100%);}
+  .hero::before{opacity:.55;}
+}
+@media (max-width:560px){
+  .site-header{min-height:64px;padding:8px 16px;}
+  .brand img{width:110px;}
+  .social-links{display:none;}
+  .hero{min-height:720px;padding-top:64px;background-position:63% center;}
+  .hero-content{width:88vw;margin:0 auto;padding-top:38px;}
+  .hero-content::before{font-size:8px;letter-spacing:.12em;margin-bottom:18px;}
+  .hero-logo{width:100%;}
+  .hero-subtitle{font-size:10px;letter-spacing:.16em;}
+  .hero-tags{font-size:9px;letter-spacing:.16em;}
+  .hero-actions .button{padding:13px 15px;font-size:9px;}
+  .location{left:6vw;right:auto;bottom:24px;font-size:8px;}
+  .quick-links a{min-height:94px;padding:18px;}
+}
