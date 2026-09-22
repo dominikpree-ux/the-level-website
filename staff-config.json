@@ -1,0 +1,25 @@
+{
+  "storage": "localStorage starter implementation",
+  "role_order": [
+    "Owner",
+    "Co-Owner",
+    "Management",
+    "Manager",
+    "Event Manager",
+    "DJ",
+    "Bartender",
+    "Hostess",
+    "Dancer",
+    "Security",
+    "Photographer",
+    "Staff"
+  ],
+  "fields": [
+    "image",
+    "role",
+    "name",
+    "discord",
+    "bio"
+  ],
+  "sorting": "role hierarchy first, then display name alphabetically"
+}

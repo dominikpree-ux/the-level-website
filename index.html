@@ -26,7 +26,7 @@
   <div class="status"><span></span> SYSTEM ONLINE</div>
   <nav>
     <a href="#events">EVENTS</a>
-    <a href="#about">ABOUT</a>
+    <a href="#about">ABOUT</a><a href="#staff">STAFF</a>
     <a href="#gallery">GALLERY</a>
     <a href="#community">COMMUNITY</a>
   </nav>
@@ -101,7 +101,7 @@ WELCOME, USER_01.</pre>
 <section class="ticker"><div>THE LƎVE⅃ • SIGNAL ONLINE • NIGHTLIFE REDEFINED • THE LƎVE⅃ • ACCESS GRANTED • </div></section>
 
 <section id="gallery" class="section gallery">
-  <div class="section-head"><span>03 / VISUAL FEED</span><h2>FEATURED <em>IMPRESSIONS</em></h2></div>
+  <div class="section-head"><span>04 / VISUAL FEED</span><h2>FEATURED <em>IMPRESSIONS</em></h2></div>
   <div class="gallery-grid">
     <div class="gallery-box"><span>VISUAL_001</span></div>
     <div class="gallery-box"><span>VISUAL_002</span></div>
@@ -110,9 +110,79 @@ WELCOME, USER_01.</pre>
   </div>
 </section>
 
+
+<section id="staff" class="section staff-section">
+  <div class="section-head">
+    <span>03 / STAFF DATABASE</span>
+    <h2>MEET THE <em>NETWORK</em></h2>
+  </div>
+  <div class="staff-toolbar">
+    <div>
+      <span class="terminal-label">STAFF_DIRECTORY // ONLINE</span>
+      <p>Add team members, assign a role and the directory automatically sorts everyone by hierarchy.</p>
+    </div>
+    <button class="btn primary" id="openStaffManager" type="button">MANAGE STAFF ↗</button>
+  </div>
+  <div id="staffGrid" class="staff-grid" aria-live="polite"></div>
+  <div id="staffEmpty" class="staff-empty" hidden>
+    <span>NO STAFF RECORDS FOUND</span>
+    <small>Add your first staff member through STAFF MANAGEMENT.</small>
+  </div>
+</section>
+
+<div id="staffModal" class="staff-modal" aria-hidden="true">
+  <div class="staff-modal-backdrop" data-close-staff></div>
+  <div class="staff-manager">
+    <div class="manager-top">
+      <div><span class="terminal-label">LEVEL_OS // STAFF_MANAGER</span><h3>STAFF MANAGEMENT</h3></div>
+      <button class="modal-close" data-close-staff aria-label="Close">×</button>
+    </div>
+    <form id="staffForm" class="staff-form">
+      <input type="hidden" id="staffId">
+      <label>STAFF IMAGE
+        <input id="staffImage" type="url" placeholder="Image URL (optional)">
+      </label>
+      <label>UPLOAD IMAGE
+        <input id="staffImageFile" type="file" accept="image/*">
+      </label>
+      <label>ROLE
+        <select id="staffRole" required>
+          <option value="Owner">Owner</option>
+          <option value="Co-Owner">Co-Owner</option>
+          <option value="Management">Management</option>
+          <option value="Manager">Manager</option>
+          <option value="Event Manager">Event Manager</option>
+          <option value="DJ">DJ</option>
+          <option value="Bartender">Bartender</option>
+          <option value="Hostess">Hostess</option>
+          <option value="Dancer">Dancer</option>
+          <option value="Security">Security</option>
+          <option value="Photographer">Photographer</option>
+          <option value="Staff">Staff</option>
+        </select>
+      </label>
+      <label>DISPLAY NAME
+        <input id="staffName" type="text" placeholder="Staff name" required>
+      </label>
+      <label>DISCORD NAME
+        <input id="staffDiscord" type="text" placeholder="Discord name" required>
+      </label>
+      <label class="full">BIO / DESCRIPTION
+        <textarea id="staffBio" rows="3" placeholder="Short staff description..."></textarea>
+      </label>
+      <div class="form-actions full">
+        <button class="btn primary" type="submit">SAVE STAFF</button>
+        <button class="btn" type="button" id="clearStaffForm">CLEAR</button>
+      </div>
+    </form>
+    <div class="manager-list-head"><span>CURRENT STAFF</span><small id="staffCount">0 RECORDS</small></div>
+    <div id="staffManagerList" class="staff-manager-list"></div>
+  </div>
+</div>
+
 <section id="community" class="section community">
   <div class="community-panel">
-    <div class="section-head"><span>04 / COMMUNITY</span><h2>CONNECT TO THE <em>NETWORK</em></h2></div>
+    <div class="section-head"><span>05 / COMMUNITY</span><h2>CONNECT TO THE <em>NETWORK</em></h2></div>
     <p>Events, announcements, staff information and the latest transmissions live in the community network.</p>
     <a class="btn primary" href="#">OPEN DISCORD ↗</a>
   </div>
