@@ -1,301 +1,130 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The LƎVE⅃ — Final Fantasy XIV Nightclub</title>
-  <meta name="description" content="The LƎVE⅃ — music, people, fantasy, no limits." />
-  <link rel="stylesheet" href="style.css" />
-<style>
-    .staff-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
-    .staff-panel { max-width:620px; margin-top:24px; padding:24px; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(0,0,0,.22); }
-    .staff-panel input, .staff-panel textarea { display:block; width:100%; box-sizing:border-box; margin:10px 0; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:rgba(0,0,0,.3); color:inherit; }
-    .staff-panel textarea { min-height:90px; resize:vertical; }
-    .staff-panel [hidden] { display:none !important; }
-    .application-card { margin:16px 0; padding:16px; border:1px solid rgba(255,255,255,.18); border-radius:12px; }
-    .application-card select { margin-top:10px; padding:10px; border-radius:8px; background:#111; color:inherit; }
-
-    .profile-preview { display:flex; gap:16px; align-items:flex-start; margin:16px 0; }
-    .profile-preview img { width:96px; height:96px; object-fit:cover; border-radius:50%; border:1px solid rgba(255,255,255,.25); }
-
-    .public-staff-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:24px; }
-    .public-staff-card { padding:18px; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(0,0,0,.22); }
-    .public-staff-card img { width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:12px; margin-bottom:12px; background:rgba(255,255,255,.06); }
-    .public-staff-card h3 { margin:0 0 6px; }
-    .public-staff-card .staff-role { color:#ff7bd8; font-weight:700; letter-spacing:.04em; text-transform:uppercase; font-size:.8rem; }
-    .public-staff-card .staff-bio { margin-top:10px; }
-    .public-staff-empty { margin-top:20px; opacity:.75; }
-
-
-    .public-events-grid { display:grid; gap:16px; margin-top:20px; }
-    .public-event-card, .admin-event-card, .admin-event-create { margin:16px 0; padding:16px; border:1px solid rgba(255,255,255,.18); border-radius:12px; }
-    .public-event-card img { width:100%; max-height:280px; object-fit:cover; border-radius:10px; }
-    .admin-event-card input, .admin-event-card textarea, .admin-event-card select, .admin-event-create input, .admin-event-create textarea, .admin-event-create select { display:block; width:100%; box-sizing:border-box; margin:8px 0; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:#111; color:inherit; }
-    .admin-profile-create { margin:16px 0; padding:16px; border:1px solid rgba(255,255,255,.25); border-radius:12px; }
-    .admin-profile-create input, .admin-profile-create textarea, .admin-profile-create select { display:block; width:100%; box-sizing:border-box; margin:8px 0; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:#111; color:inherit; }
-    .admin-profile-card { margin:16px 0; padding:16px; border:1px solid rgba(255,255,255,.18); border-radius:12px; }
-    .admin-profile-card input, .admin-profile-card textarea, .admin-profile-card select { display:block; width:100%; box-sizing:border-box; margin:8px 0; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:#111; color:inherit; }
-
-  
-    /* Leichte Anpassung der ursprünglichen Event-Beschreibung */
-    .next-event-description {
-      max-width: 560px;
-      margin: 10px 0 16px;
-      line-height: 1.6;
-    }
-  
-    .description-align-left { text-align: left; }
-    .description-align-center { text-align: center; }
-
-.rich-editor-wrap{display:grid;gap:8px;margin:8px 0 14px}
-.rich-toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.rich-toolbar button,.rich-toolbar select{padding:6px 9px;border:1px solid rgba(255,255,255,.25);border-radius:6px;background:#171722;color:inherit;cursor:pointer}
-.rich-editor{min-height:150px;padding:12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(0,0,0,.18);color:inherit;outline:none;white-space:pre-wrap}
-.rich-editor img{max-width:100%;height:auto;border-radius:8px}
-.rich-editor:empty:before{content:attr(data-placeholder);opacity:.5}
-.dj-slots-editor{display:grid;gap:8px;margin:10px 0}.dj-slot-row{display:grid;grid-template-columns:70px 1fr 1fr 1fr;gap:6px;align-items:center}.dj-slot-row input{min-width:0}@media(max-width:700px){.dj-slot-row{grid-template-columns:1fr}.dj-slot-row strong{margin-top:8px}}.dj-slot-display{display:grid;gap:6px;margin:10px 0}.dj-slot-item{padding:8px 10px;border:1px solid rgba(255,255,255,.18);border-radius:8px}.dj-slot-item a{color:inherit}
-    /* Universal image framing controls */
-    .image-frame-controls{display:grid;gap:8px;margin:10px 0;padding:12px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(0,0,0,.16)}
-    .image-frame-controls label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.78rem}
-    .image-frame-controls input[type="range"]{width:100%;accent-color:#ff63d8}
-    .image-frame-preview{display:block;width:100%;max-width:260px;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:#111}
-    .image-frame-value{font-variant-numeric:tabular-nums;color:#ff9ce8}
-    .admin-image-frame{margin-top:8px}
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#05030a">
+<title>The LƎVE⅃ — Cyberpunk Nightclub</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="#home" aria-label="The LƎVE⅃ home">
-      <img src="assets/logo-white.png" alt="The LƎVE⅃ logo" />
-    </a>
-    <nav>
-      <a href="#home" data-i18n="navHome">Home</a>
-      <a href="#events" data-i18n="navEvents">Events</a>
-      <a href="#staff" data-i18n="navStaff">Staff</a>
-      <a href="#gallery" data-i18n="navGallery">Gallery</a>
-      <a href="#about" data-i18n="navAbout">About</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <div class="header-actions">
-      <button class="lang-button" id="languageToggle" type="button">DE | EN</button>
-      <div class="social-links" aria-label="Social links"><a href="#" aria-label="Discord">◉</a><a href="#" aria-label="Twitch">▣</a><a href="#" aria-label="Instagram">◎</a><span class="menu-mark">☰</span></div>
-      <a class="discord-button" href="https://discord.gg/EAvJ8RbBzJ" target="_blank" rel="noopener" data-i18n="discordButton">Join Our Discord</a>
-    </div>
-  </header>
-
-  <main>
-    <section id="home" class="hero">
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <p class="eyebrow" data-i18n="eyebrow">FINAL FANTASY XIV NIGHTCLUB</p>
-        <img class="hero-logo" src="assets/logo-white.png" alt="The LƎVE⅃" />
-        <p class="hero-subtitle" data-i18n="heroSubtitle">More than a club. A higher experience.</p>
-        <div class="hero-tags">
-          <span>Music</span><span>People</span><span>Fantasy</span><span>No limits</span>
-        </div>
-        <div class="hero-actions">
-          <a class="button primary" href="#events" data-i18n="nextEvent">Next Event</a>
-          <a class="button secondary" href="#about" data-i18n="discover">Discover The LƎVE⅃</a>
-        </div>
-      </div>
-      <div class="location" data-i18n="location">Light · Raiden · Empyreum · Ward 2 · Plot 60</div>
-    </section>
-
-    <section class="quick-links">
-      <a href="#events"><strong>01</strong><span data-i18n="quickEvents">Events</span><small data-i18n="quickEventsSub">Upcoming nights</small></a>
-      <a href="#staff-directory"><strong>02</strong><span data-i18n="quickStaff">Staff</span><small data-i18n="quickStaffSub">Meet the team</small></a>
-      <a href="#gallery"><strong>03</strong><span data-i18n="quickGallery">Gallery</span><small data-i18n="quickGallerySub">Moments & Gpose</small></a>
-      <a href="#about"><strong>04</strong><span data-i18n="quickAbout">About</span><small data-i18n="quickAboutSub">Our story</small></a>
-    </section>
-
-    <section id="events" class="section split">
-      <div>
-        <p class="eyebrow" data-i18n="welcomeEyebrow">WELCOME TO</p>
-        <h2 data-i18n="welcomeTitle">A different level of nightlife.</h2>
-        <p data-i18n="welcomeText">The LƎVE⅃ is a Final Fantasy XIV nightclub built for unforgettable nights, great people, music, atmosphere and a welcoming community.</p>
-        <p class="muted" data-i18n="welcomeTextDe">Tauche ein in Musik, Atmosphäre und eine Welt, in der Fantasie auf Realität trifft.</p>
-        <a class="text-link" href="#about" data-i18n="moreAbout">More about us →</a>
-      </div>
-      <article class="event-card">
-        <div class="event-date" id="nextEventDate"><strong>02</strong><span>OCT<br />2026</span></div>
-        <div class="event-info">
-          <p class="eyebrow" data-i18n="nextEventLabel">NEXT EVENT</p>
-          <h3 id="nextEventTitle" data-i18n="eventTitle">Grand Opening — Level 1</h3>
-          <p id="nextEventDescription" class="next-event-description" data-i18n="eventDetails">6:00 PM ST · DJ Lineup · The LƎVE⅃</p>
-          <a id="nextEventDetailsButton" class="button primary" href="#events" data-i18n="eventDetailsButton">Event Details</a>
-        </div>
-      </article>
-<div class="event-admin-public-list">
-        <h3>Upcoming Events</h3>
-        <div id="publicEventsList" class="public-events-grid">
-          <p class="muted">Events are loading...</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="staff" class="section feature-section">
-      <p class="eyebrow" data-i18n="staffEyebrow">BECOME PART OF IT</p>
-      <h2 data-i18n="staffTitle">Join the team.</h2>
-      <p data-i18n="staffText">We are looking for friendly, reliable and creative people for our club team.</p>
-      <div class="staff-actions">
-        <button class="button primary" id="openLoginButton" type="button">Staff Login</button>
-        <button class="button secondary" id="openApplicationButton" type="button">Staff Application</button>
-      </div>
-      <div id="staffPanel" class="staff-panel" hidden>
-        <div id="authArea">
-          <h3>Staff Login / Registration</h3>
-          <input id="authEmail" type="email" placeholder="E-Mail" autocomplete="email" />
-          <input id="authPassword" type="password" placeholder="Passwort" autocomplete="current-password" />
-          <div class="staff-actions">
-            <button class="button primary" id="loginButton" type="button">Einloggen</button>
-            <button class="button secondary" id="registerButton" type="button">Registrieren</button>
-          </div>
-          <p id="authMessage" class="muted" role="status"></p>
-        </div>
-
-        <div id="applicationArea" hidden>
-          <h3>Staff-Bewerbung</h3>
-          <input id="applicationName" type="text" placeholder="Name / Charaktername" />
-          <input id="applicationEmail" type="email" placeholder="E-Mail" />
-          <input id="applicationRole" type="text" placeholder="Gewünschte Rolle" />
-          <textarea id="applicationExperience" placeholder="Erfahrung"></textarea>
-          <textarea id="applicationMessage" placeholder="Warum möchtest du Teil des Teams werden?"></textarea>
-          <button class="button primary" id="submitApplicationButton" type="button">Bewerbung senden</button>
-          <p id="applicationMessageStatus" class="muted" role="status"></p>
-        </div>
-
-        <div id="dashboardArea" hidden>
-          <h3>Staff Dashboard</h3>
-          <p id="dashboardWelcome"></p>
-          <p id="dashboardStatus" class="muted"></p>
-          <button class="button secondary" id="logoutButton" type="button">Ausloggen</button>
-        </div>
-
-
-        <div id="profileArea" hidden>
-          <h3>Mein Staff-Profil</h3>
-          <input id="profileUsername" type="text" placeholder="Anzeigename / Charaktername" />
-          <input id="profileImageUrl" type="url" placeholder="Profilbild-URL" />
-              <div class="image-frame-controls" id="profileImageControls">
-                <label for="profileImageZoom">Zoom <span class="image-frame-value" id="profileImageZoomValue">100%</span></label>
-                <input id="profileImageZoom" type="range" min="100" max="300" value="100" step="5" />
-                <label for="profileImageX">Horizontal <span class="image-frame-value" id="profileImageXValue">50%</span></label>
-                <input id="profileImageX" type="range" min="0" max="100" value="50" step="1" />
-                <label for="profileImageY">Vertikal <span class="image-frame-value" id="profileImageYValue">50%</span></label>
-                <input id="profileImageY" type="range" min="0" max="100" value="50" step="1" />
-                <img id="profileImagePreview" class="image-frame-preview" alt="Profilbild Vorschau" />
-              </div>
-          <input id="profileDiscord" type="text" placeholder="Discord-Name" />
-          <textarea id="profileBio" placeholder="Deine Bio / Beschreibung"></textarea>
-          <p id="profileRoleInfo" class="muted"></p>
-          <button class="button primary" id="saveProfileButton" type="button">Profil speichern</button>
-          <p id="profileMessage" class="muted" role="status"></p>
-        </div>
-
-        <div id="adminArea" hidden>
-          <h3>Admin-Bereich</h3>
-          <p class="muted">Nur für die konfigurierte Admin-E-Mail-Adresse.</p>
-          <button class="button primary" id="loadApplicationsButton" type="button">Bewerbungen laden</button>
-          <p id="adminMessage" class="muted" role="status"></p>
-          <div id="applicationsList"></div>
-
-
-          <div id="adminEventsArea" hidden>
-            <h3>Event-Verwaltung</h3>
-            <p class="muted">Events erstellen, bearbeiten und löschen.</p>
-            <div class="admin-event-create">
-              <h4>➕ Neues Event</h4>
-              <input id="newEventTitle" placeholder="Event-Titel" />
-              <input id="newEventDate" type="date" />
-              <input id="newEventTime" placeholder="Zeit, z. B. 18:00–23:00 ST" />
-              <input id="newEventTheme" placeholder="Theme / Genre" />
-              <input id="newEventLocation" placeholder="Location" value="The LƎVE⅃ · Light · Raiden · Empyreum · Ward 2 · Plot 60" />
-              <input id="newEventLineup" placeholder="DJ-Lineup" />
-<div class="dj-slots-editor">
-  <h4>DJ-Slots</h4>
-  <p class="muted">Pro Slot kannst du Uhrzeit, DJ-Name und Twitch-Link eintragen.</p>
-  <div class="dj-slot-row"><strong>Slot 1</strong><input id="newEventSlot1Time" placeholder="18:00–20:00 ST"><input id="newEventSlot1DJ" placeholder="DJ-Name"><input id="newEventSlot1Link" placeholder="Twitch-URL"></div>
-  <div class="dj-slot-row"><strong>Slot 2</strong><input id="newEventSlot2Time" placeholder="20:00–22:00 ST"><input id="newEventSlot2DJ" placeholder="DJ-Name"><input id="newEventSlot2Link" placeholder="Twitch-URL"></div>
-  <div class="dj-slot-row"><strong>Slot 3</strong><input id="newEventSlot3Time" placeholder="22:00–23:00 ST"><input id="newEventSlot3DJ" placeholder="DJ-Name"><input id="newEventSlot3Link" placeholder="Twitch-URL"></div>
+<div id="boot" class="boot">
+  <div class="boot-grid"></div>
+  <div class="boot-content">
+    <div class="boot-mark">THE LƎVE⅃</div>
+    <div id="bootText">INITIALIZING NIGHTCLUB NETWORK...</div>
+    <div class="progress"><i id="progress"></i></div>
+    <small id="bootStatus">SYSTEM CHECK 00%</small>
+  </div>
 </div>
 
-              <input id="newEventImage" placeholder="Banner-URL (optional)" /><small class="muted">Bild-Zoom und Ausschnitt können nach dem Erstellen im Event-Editor angepasst werden.</small>
-              <textarea id="newEventDescription" placeholder="Beschreibung"></textarea>
-          <label for="newEventDescriptionAlign">Beschreibung ausrichten</label>
-          <select id="newEventDescriptionAlign">
-            <option value="left">Linksbündig</option>
-            <option value="center">Zentriert</option>
-          </select>
-              <select id="newEventStatus">
-                <option value="published" selected>published – öffentlich</option>
-                <option value="draft">draft – verborgen</option>
-              </select>
-              <button class="button primary" id="createEventButton" type="button">Event erstellen</button>
-              <p id="createEventMessage" class="muted" role="status"></p>
-            </div>
-            <div id="adminEventsList"></div>
-          </div>
+<div class="noise"></div>
+<div class="scanline"></div>
 
-          <div id="adminProfilesArea" hidden>
-            <h3>Staff-Profile verwalten</h3>
-            <p class="muted">Admin kann genehmigte Staff-Profile bearbeiten und deaktivieren.</p>
+<header class="nav">
+  <a class="logo" href="#home" aria-label="The LƎVE⅃"><img src="assets/logo-white.png" alt="The LƎVE⅃"></a>
+  <div class="status"><span></span> SYSTEM ONLINE</div>
+  <nav>
+    <a href="#events">EVENTS</a>
+    <a href="#about">ABOUT</a>
+    <a href="#gallery">GALLERY</a>
+    <a href="#community">COMMUNITY</a>
+  </nav>
+  <a class="nav-cta" href="#events">ACCESS</a>
+</header>
 
-            <div class="admin-profile-create">
-              <h4>➕ Neues Staff-Profil erstellen</h4>
-              <input id="newProfileUsername" placeholder="Anzeigename" />
-              <input id="newProfileRole" placeholder="Rolle, z. B. DJ, Dancer, Bartender" />
-              <input id="newProfileAvatar" placeholder="Profilbild-URL" />
-              <input id="newProfileDiscord" placeholder="Discord-Name" />
-              <textarea id="newProfileBio" placeholder="Bio / Beschreibung"></textarea>
-              <select id="newProfileStatus">
-                <option value="approved" selected>approved – sofort öffentlich</option>
-                <option value="inactive">inactive – nicht öffentlich</option>
-                <option value="pending">pending</option>
-              </select>
-              <button class="button primary" id="createProfileButton" type="button">Staff-Profil erstellen</button>
-              <p id="createProfileMessage" class="muted" role="status"></p>
-            </div>
+<main>
+<section id="home" class="hero">
+  <div class="hud hud-a">SIGNAL // DETECTED<br><b>LVL-01</b></div>
+  <div class="hud hud-b">SECTOR 02<br><b>RAIDEN / EMPYREUM</b></div>
+  <div class="target t1"></div><div class="target t2"></div>
+  <div class="hero-art">
+    <div class="cyber-sun"></div>
+    <div class="city"></div>
+  </div>
+  <div class="hero-copy">
+    <p class="eyebrow">FINAL FANTASY XIV // NIGHTCLUB NETWORK</p>
+    <h1><span>THE</span> LƎVE⅃</h1>
+    <div class="glitch-word" data-text="A HIGHER EXPERIENCE">A HIGHER EXPERIENCE</div>
+    <p class="hero-text">Neon nights. Digital dreams. Music, people and fantasy inside one connected world.</p>
+    <div class="actions">
+      <a class="btn primary" href="#events">NEXT EVENT <i>↗</i></a>
+      <a class="btn" href="#community">JOIN COMMUNITY <i>↗</i></a>
+    </div>
+  </div>
+  <div class="hero-bottom">
+    <span>LIGHT • RAIDEN</span><span>EMPYREUM • WARD 2 • PLOT 60</span><span>ACCESS // GRANTED</span>
+  </div>
+</section>
 
-            <div id="adminProfilesList"></div>
-          </div>
+<section id="events" class="section events">
+  <div class="section-head"><span>01 / EVENTS</span><h2>ENTER THE <em>NIGHT</em></h2></div>
+  <div class="event-grid">
+    <article class="event-card featured">
+      <div class="card-code">EVENT_ID // LEVEL-01</div>
+      <div class="event-date">02 <small>OCT</small> <b>2026</b></div>
+      <h3>GRAND OPENING — LEVEL 1</h3>
+      <p>The first signal. The first night. Welcome to The LƎVE⅃.</p>
+      <div class="event-meta"><span>18:00 ST</span><span>LIGHT / RAIDEN</span></div>
+      <a href="#community">EVENT DETAILS ↗</a>
+    </article>
+    <article class="event-card">
+      <div class="card-code">STATUS // ONLINE</div>
+      <h3>WEEKLY SIGNAL</h3>
+      <p>New DJs. New themes. New frequencies. Check back for the next transmission.</p>
+      <div class="event-meta"><span>EVERY WEEK</span><span>THE LƎVE⅃</span></div>
+      <a href="#community">FOLLOW THE SIGNAL ↗</a>
+    </article>
+  </div>
+</section>
 
-        </div>
-      </div>
-    </section>
+<section id="about" class="section about">
+  <div class="section-head"><span>02 / ABOUT</span><h2>WELCOME TO <em>THE LƎVE⅃</em></h2></div>
+  <div class="about-grid">
+    <div class="terminal">
+      <div class="terminal-top"><span>LEVEL_OS</span><span>● ● ●</span></div>
+      <pre>ACCESSING CLUB DATABASE...
+SIGNAL: STABLE
+NETWORK: CONNECTED
+MUSIC: ONLINE
+COMMUNITY: ACTIVE
 
+WELCOME, USER_01.</pre>
+    </div>
+    <div>
+      <p class="big-copy">A cyberpunk-inspired FFXIV nightclub built around music, community and unforgettable nights.</p>
+      <p>Step through the signal and discover a venue where every event has its own identity. The LƎVE⅃ combines neon aesthetics, themed nights, DJs and a community-first experience.</p>
+    </div>
+  </div>
+</section>
 
-    <section id="staff-directory" class="section">
-      <p class="eyebrow">MEET THE TEAM</p>
-      <h2>Our Staff.</h2>
-      <p class="muted">Discover the approved members of The LƎVE⅃ team.</p>
-      <div id="publicStaffList" class="public-staff-grid">
-        <p class="public-staff-empty">Staff profiles are loading...</p>
-      </div>
-    </section>
+<section class="ticker"><div>THE LƎVE⅃ • SIGNAL ONLINE • NIGHTLIFE REDEFINED • THE LƎVE⅃ • ACCESS GRANTED • </div></section>
 
-    <section id="gallery" class="section">
-      <p class="eyebrow" data-i18n="galleryEyebrow">FEATURED IMPRESSIONS</p>
-      <h2 data-i18n="galleryTitle">Moments after dark.</h2>
-      <div class="gallery-grid">
-        <img src="assets/character.png" alt="The LƎVE⅃ character portrait" />
-        <div class="gallery-placeholder">GPOSE<br /><span>COMING SOON</span></div>
-        <div class="gallery-placeholder">EVENTS<br /><span>COMING SOON</span></div>
-      </div>
-    </section>
+<section id="gallery" class="section gallery">
+  <div class="section-head"><span>03 / VISUAL FEED</span><h2>FEATURED <em>IMPRESSIONS</em></h2></div>
+  <div class="gallery-grid">
+    <div class="gallery-box"><span>VISUAL_001</span></div>
+    <div class="gallery-box"><span>VISUAL_002</span></div>
+    <div class="gallery-box"><span>VISUAL_003</span></div>
+    <div class="gallery-box wide"><span>VISUAL_004</span></div>
+  </div>
+</section>
 
-    <section id="about" class="section about">
-      <p class="eyebrow" data-i18n="aboutEyebrow">THE LƎVE⅃</p>
-      <h2 data-i18n="aboutTitle">Same night. Different level.</h2>
-      <p data-i18n="aboutText">A place for music, friendship, fantasy and expressive characters. Everyone is welcome to enjoy the atmosphere and create memories together.</p>
-    </section>
-  </main>
+<section id="community" class="section community">
+  <div class="community-panel">
+    <div class="section-head"><span>04 / COMMUNITY</span><h2>CONNECT TO THE <em>NETWORK</em></h2></div>
+    <p>Events, announcements, staff information and the latest transmissions live in the community network.</p>
+    <a class="btn primary" href="#">OPEN DISCORD ↗</a>
+  </div>
+</section>
+</main>
 
-  <footer>
-    <img src="assets/logo-white.png" alt="The LƎVE⅃ logo" />
-    <p>© 2026 The LƎVE⅃ · Not affiliated with Square Enix.</p>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js"></script>
-<!-- Homepage event data hooks: add these IDs to the corresponding existing elements for live updates. -->
+<footer>
+  <div class="footer-logo"><img src="assets/logo-white.png" alt="The LƎVE⅃"></div>
+  <div>FINAL FANTASY XIV // NIGHTCLUB</div>
+  <div>LIGHT • RAIDEN • EMPYREUM W2/P60</div>
+  <div>© 2026 THE LƎVE⅃</div>
+</footer>
+<script src="script.js"></script>
 </body>
 </html>
