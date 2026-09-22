@@ -17,8 +17,8 @@ hero.addEventListener('pointermove',e=>{
 const STAFF_STORAGE_KEY = 'the_level_staff_v1'; // legacy fallback only
 const staffRoleOrder = {
   'Owner': 1, 'Co-Owner': 2, 'Management': 3, 'Manager': 4, 'Event Manager': 5,
-  'DJ': 6, 'Escort': 7, 'Bartender': 8, 'Hostess': 9, 'Dancer': 10, 'Security': 11,
-  'Photographer': 12, 'Shouter': 13, 'Staff': 14
+  'DJ': 6, 'Bartender': 7, 'Hostess': 8, 'Dancer': 9, 'Security': 10,
+  'Photographer': 11, 'Staff': 12
 };
 
 const supabaseClient = window.supabase && window.THE_LEVEL_SUPABASE_CONFIG?.url && window.THE_LEVEL_SUPABASE_CONFIG?.anonKey
@@ -43,26 +43,13 @@ async function isAdmin(user){
   return !error && !!data;
 }
 
-let lastStaffData = null;
-
 async function loadStaff(){
   if(supabaseClient){
     const {data,error}=await supabaseClient.from('staff').select('*').order('sort_order',{ascending:true}).order('name',{ascending:true});
-    if(!error && Array.isArray(data)){
-      lastStaffData = sortedStaff(data);
-      return lastStaffData;
-    }
-    // Never replace already-rendered Supabase staff with an empty fallback when a
-    // temporary request/auth/RLS error occurs. This prevents cards from popping away.
-    if(Array.isArray(lastStaffData)) return lastStaffData;
-    return [];
+    if(!error && data) return sortedStaff(data);
   }
   // Local fallback keeps the design preview usable until Supabase is configured.
-  try{
-    const local=sortedStaff(JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY))||[]);
-    lastStaffData=local;
-    return local;
-  }catch{return lastStaffData||[]}
+  try{return sortedStaff(JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY))||[])}catch{return []}
 }
 
 function renderStaff(staff){

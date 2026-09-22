@@ -15,14 +15,14 @@
 .staff-toolbar{display:flex;justify-content:space-between;gap:30px;align-items:center;padding:22px 0 35px;border-bottom:1px solid rgba(255,255,255,.08)}
 .staff-toolbar p{color:var(--muted);max-width:720px;margin:10px 0 0;font-size:16px}
 .terminal-label{font:400 9px Audiowide,Orbitron,sans-serif;letter-spacing:2px;color:var(--cyan)}
-.staff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:35px}
-.staff-card{position:relative;min-height:450px;border:1px solid rgba(255,43,214,.25);background:linear-gradient(145deg,#100815,#05060b);overflow:hidden;transition:.35s}
+.staff-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:35px}
+.staff-card{position:relative;min-height:360px;border:1px solid rgba(255,43,214,.25);background:linear-gradient(145deg,#100815,#05060b);overflow:hidden;transition:.35s}
 .staff-card:hover{transform:translateY(-6px);border-color:var(--pink);box-shadow:0 20px 50px rgba(255,43,214,.13)}
-.staff-photo{height:300px;background:linear-gradient(135deg,rgba(255,43,214,.16),rgba(36,232,255,.05));position:relative;overflow:hidden}
+.staff-photo{height:230px;background:linear-gradient(135deg,rgba(255,43,214,.16),rgba(36,232,255,.05));position:relative;overflow:hidden}
 .staff-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.9) contrast(1.08)}
 .staff-photo:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 6px,rgba(36,232,255,.045) 7px 8px);pointer-events:none}
 .staff-role{position:absolute;top:12px;left:12px;z-index:2;padding:7px 9px;background:rgba(5,3,10,.8);border:1px solid var(--cyan);font:400 8px Audiowide;letter-spacing:1px;color:var(--cyan)}
-.staff-info{padding:22px}.staff-name{font:400 22px Audiowide;margin:0 0 8px}.staff-discord{font:400 9px Audiowide;color:var(--pink);letter-spacing:1px}.staff-bio{font-size:15px;color:var(--muted);margin:12px 0 0;line-height:1.45}
+.staff-info{padding:18px}.staff-name{font:400 19px Audiowide;margin:0 0 8px}.staff-discord{font:400 9px Audiowide;color:var(--pink);letter-spacing:1px}.staff-bio{font-size:14px;color:var(--muted);margin:12px 0 0;line-height:1.45}
 .staff-rank{position:absolute;right:10px;bottom:10px;font:400 8px Audiowide;color:rgba(255,255,255,.25)}
 .staff-empty{margin-top:35px;border:1px dashed rgba(36,232,255,.25);padding:60px;text-align:center;color:var(--cyan);font:400 11px Audiowide}
 .staff-empty small{display:block;margin-top:10px;color:var(--muted);font:400 13px Rajdhani,Arial,sans-serif}
