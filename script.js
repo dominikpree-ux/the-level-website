@@ -14,11 +14,11 @@ hero.addEventListener('pointermove',e=>{
 });
 
 // STAFF DIRECTORY + ADMIN AUTH
-const STAFF_STORAGE_KEY = 'the_level_staff_v1'; // legacy fallback only
+const STAFF_STORAGE_KEY = 'the_level_staff_v1'; // local cache of the last successful Supabase result
 const staffRoleOrder = {
   'Owner': 1, 'Co-Owner': 2, 'Management': 3, 'Manager': 4, 'Event Manager': 5,
-  'DJ': 6, 'Bartender': 7, 'Hostess': 8, 'Dancer': 9, 'Security': 10,
-  'Photographer': 11, 'Staff': 12
+  'DJ': 6, 'Escort': 7, 'Bartender': 8, 'Hostess': 9, 'Dancer': 10, 'Security': 11,
+  'Photographer': 12, 'Shouter': 13, 'Staff': 14
 };
 
 const supabaseClient = window.supabase && window.THE_LEVEL_SUPABASE_CONFIG?.url && window.THE_LEVEL_SUPABASE_CONFIG?.anonKey
@@ -46,9 +46,19 @@ async function isAdmin(user){
 async function loadStaff(){
   if(supabaseClient){
     const {data,error}=await supabaseClient.from('staff').select('*').order('sort_order',{ascending:true}).order('name',{ascending:true});
-    if(!error && data) return sortedStaff(data);
+    if(!error && Array.isArray(data)){
+      const sorted=sortedStaff(data);
+      try{localStorage.setItem(STAFF_STORAGE_KEY,JSON.stringify(sorted));}catch{}
+      return sorted;
+    }
+    // Never replace already visible staff with an empty list because a transient
+    // network/Auth/RLS error occurred. Use the last successful snapshot instead.
+    try{
+      const cached=JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY));
+      if(Array.isArray(cached)) return sortedStaff(cached);
+    }catch{}
+    return null;
   }
-  // Local fallback keeps the design preview usable until Supabase is configured.
   try{return sortedStaff(JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY))||[])}catch{return []}
 }
 
@@ -74,6 +84,9 @@ function renderStaff(staff){
 
 async function refreshStaff(){
   const staff=await loadStaff();
+  // null means the backend failed and there is no safe replacement. Keep the
+  // currently rendered cards exactly as they are.
+  if(staff===null)return;
   renderStaff(staff);
   if(currentIsAdmin){
     document.getElementById('staffCount').textContent=`${staff.length} RECORDS // ADMIN`;
@@ -167,17 +180,39 @@ document.getElementById('staffForm')?.addEventListener('submit',async e=>{
   }catch(err){alert('Could not save staff member. Check Supabase/RLS configuration.')}
 });
 
+function getCachedStaff(){
+  try{
+    const cached=JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY));
+    return Array.isArray(cached)?sortedStaff(cached):null;
+  }catch{return null}
+}
+
 async function initAdmin(){
+  // Render the last successful snapshot immediately. Supabase then refreshes it
+  // in the background, so visitors never have to wait for the network before
+  // seeing the Staff Directory.
+  const cached=getCachedStaff();
+  if(cached?.length){renderStaff(cached);}
+
   if(supabaseClient){
     const {data}=await supabaseClient.auth.getSession();
     currentUser=data.session?.user||null;
     currentIsAdmin=await isAdmin(currentUser);
-    supabaseClient.auth.onAuthStateChange(async(_event,session)=>{
+    if(currentIsAdmin && cached) renderStaff(cached);
+
+    supabaseClient.auth.onAuthStateChange((_event,session)=>{
       currentUser=session?.user||null;
-      currentIsAdmin=await isAdmin(currentUser);
-      await refreshStaff();
+      setTimeout(async()=>{
+        currentIsAdmin=await isAdmin(currentUser);
+        // Keep the current cards visible while the background refresh runs.
+        await refreshStaff();
+      },0);
     });
+
+    // Background refresh; do not block the initial page render.
+    refreshStaff();
+  } else if(!cached){
+    renderStaff([]);
   }
-  await refreshStaff();
 }
 initAdmin();
