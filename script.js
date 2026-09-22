@@ -43,13 +43,26 @@ async function isAdmin(user){
   return !error && !!data;
 }
 
+let lastStaffData = null;
+
 async function loadStaff(){
   if(supabaseClient){
     const {data,error}=await supabaseClient.from('staff').select('*').order('sort_order',{ascending:true}).order('name',{ascending:true});
-    if(!error && data) return sortedStaff(data);
+    if(!error && Array.isArray(data)){
+      lastStaffData = sortedStaff(data);
+      return lastStaffData;
+    }
+    // Never replace already-rendered Supabase staff with an empty fallback when a
+    // temporary request/auth/RLS error occurs. This prevents cards from popping away.
+    if(Array.isArray(lastStaffData)) return lastStaffData;
+    return [];
   }
   // Local fallback keeps the design preview usable until Supabase is configured.
-  try{return sortedStaff(JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY))||[])}catch{return []}
+  try{
+    const local=sortedStaff(JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY))||[]);
+    lastStaffData=local;
+    return local;
+  }catch{return lastStaffData||[]}
 }
 
 function renderStaff(staff){
