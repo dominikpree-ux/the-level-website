@@ -13,96 +13,171 @@ hero.addEventListener('pointermove',e=>{
  document.querySelector('.hero-copy').style.transform=`translate(${x*-5}px,${y*-3}px)`;
 });
 
-// STAFF DIRECTORY
-const STAFF_STORAGE_KEY = 'the_level_staff_v1';
+// STAFF DIRECTORY + ADMIN AUTH
+const STAFF_STORAGE_KEY = 'the_level_staff_v1'; // legacy fallback only
 const staffRoleOrder = {
   'Owner': 1, 'Co-Owner': 2, 'Management': 3, 'Manager': 4, 'Event Manager': 5,
   'DJ': 6, 'Bartender': 7, 'Hostess': 8, 'Dancer': 9, 'Security': 10,
   'Photographer': 11, 'Staff': 12
 };
-const defaultStaff = [];
 
-function loadStaff(){
-  try{return JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY)) || defaultStaff}
-  catch{return defaultStaff}
-}
-function saveStaff(list){localStorage.setItem(STAFF_STORAGE_KEY,JSON.stringify(list))}
+const supabaseClient = window.supabase && window.THE_LEVEL_SUPABASE_CONFIG?.url && window.THE_LEVEL_SUPABASE_CONFIG?.anonKey
+  ? window.supabase.createClient(window.THE_LEVEL_SUPABASE_CONFIG.url, window.THE_LEVEL_SUPABASE_CONFIG.anonKey)
+  : null;
+
+let currentUser = null;
+let currentIsAdmin = false;
+
 function sortedStaff(list){
   return [...list].sort((a,b)=>{
     const ra=staffRoleOrder[a.role]??99, rb=staffRoleOrder[b.role]??99;
-    return ra-rb || a.name.localeCompare(b.name,undefined,{sensitivity:'base'});
+    return ra-rb || (a.name||'').localeCompare(b.name||'',undefined,{sensitivity:'base'});
   });
 }
 function escapeHtml(v=''){const d=document.createElement('div');d.textContent=v;return d.innerHTML}
 function escapeAttr(v=''){return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
-function renderStaff(){
+async function isAdmin(user){
+  if(!supabaseClient || !user) return false;
+  const {data,error}=await supabaseClient.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();
+  return !error && !!data;
+}
+
+async function loadStaff(){
+  if(supabaseClient){
+    const {data,error}=await supabaseClient.from('staff').select('*').order('sort_order',{ascending:true}).order('name',{ascending:true});
+    if(!error && data) return sortedStaff(data);
+  }
+  // Local fallback keeps the design preview usable until Supabase is configured.
+  try{return sortedStaff(JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY))||[])}catch{return []}
+}
+
+function renderStaff(staff){
   const grid=document.getElementById('staffGrid'), empty=document.getElementById('staffEmpty');
   const listEl=document.getElementById('staffManagerList'), count=document.getElementById('staffCount');
   if(!grid||!listEl)return;
-  const staff=sortedStaff(loadStaff());
   grid.innerHTML='';listEl.innerHTML='';empty.hidden=staff.length>0;
   count.textContent=`${staff.length} RECORDS`;
   staff.forEach((p,i)=>{
-    const card=document.createElement('article');
-    card.className='staff-card';
+    const card=document.createElement('article');card.className='staff-card';
     card.innerHTML=`<div class="staff-photo"><span class="staff-role">${escapeHtml(p.role)}</span>${p.image?`<img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">`:''}</div><div class="staff-info"><h3 class="staff-name">${escapeHtml(p.name)}</h3><div class="staff-discord">DISCORD // ${escapeHtml(p.discord)}</div>${p.bio?`<p class="staff-bio">${escapeHtml(p.bio)}</p>`:''}</div><div class="staff-rank">RANK ${String(i+1).padStart(2,'0')}</div>`;
     grid.appendChild(card);
-    const row=document.createElement('div');
-    row.className='manager-row';
-    row.innerHTML=`${p.image?`<img src="${escapeAttr(p.image)}" alt="">`:'<div></div>'}<div><strong>${escapeHtml(p.name)}</strong><span>${escapeHtml(p.role)} // ${escapeHtml(p.discord)}</span></div><div class="manager-actions"><button class="mini-btn" data-edit="${p.id}">EDIT</button><button class="mini-btn delete" data-delete="${p.id}">DELETE</button></div>`;
-    listEl.appendChild(row);
+    if(currentIsAdmin){
+      const row=document.createElement('div');row.className='manager-row';
+      row.innerHTML=`${p.image?`<img src="${escapeAttr(p.image)}" alt="">`:'<div></div>'}<div><strong>${escapeHtml(p.name)}</strong><span>${escapeHtml(p.role)} // ${escapeHtml(p.discord)}</span></div><div class="manager-actions"><button class="mini-btn" data-edit="${p.id}">EDIT</button><button class="mini-btn delete" data-delete="${p.id}">DELETE</button></div>`;
+      listEl.appendChild(row);
+    }
   });
   listEl.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editStaff(b.dataset.edit));
   listEl.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteStaff(b.dataset.delete));
 }
 
+async function refreshStaff(){
+  const staff=await loadStaff();
+  renderStaff(staff);
+  if(currentIsAdmin){
+    document.getElementById('staffCount').textContent=`${staff.length} RECORDS // ADMIN`;
+  }
+}
+
+const adminModal=document.getElementById('adminLoginModal');
 const staffModal=document.getElementById('staffModal');
-const staffForm=document.getElementById('staffForm');
-document.getElementById('openStaffManager')?.addEventListener('click',()=>{staffModal.classList.add('open');staffModal.setAttribute('aria-hidden','false');renderStaff()});
-document.querySelectorAll('[data-close-staff]').forEach(x=>x.addEventListener('click',()=>{staffModal.classList.remove('open');staffModal.setAttribute('aria-hidden','true')}));
-document.getElementById('clearStaffForm')?.addEventListener('click',()=>staffForm.reset());
+const adminMessage=document.getElementById('adminLoginMessage');
 
-document.getElementById('staffImageFile')?.addEventListener('change',e=>{
-  const file=e.target.files?.[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=()=>{document.getElementById('staffImage').value=reader.result};
-  reader.readAsDataURL(file);
-});
+function showAdminMessage(msg){if(adminMessage)adminMessage.textContent=msg}
+function openAdminLogin(){adminModal?.classList.add('open');adminModal?.setAttribute('aria-hidden','false');showAdminMessage('')}
+function closeAdminLogin(){adminModal?.classList.remove('open');adminModal?.setAttribute('aria-hidden','true')}
 
-staffForm?.addEventListener('submit',e=>{
+document.getElementById('openAdminLogin')?.addEventListener('click',openAdminLogin);
+document.querySelectorAll('[data-close-admin]').forEach(x=>x.addEventListener('click',closeAdminLogin));
+
+document.getElementById('adminLoginForm')?.addEventListener('submit',async e=>{
   e.preventDefault();
-  const list=loadStaff();
-  const id=document.getElementById('staffId').value||crypto.randomUUID();
-  const item={
-    id,
-    image:document.getElementById('staffImage').value.trim(),
-    role:document.getElementById('staffRole').value,
-    name:document.getElementById('staffName').value.trim(),
-    discord:document.getElementById('staffDiscord').value.trim(),
-    bio:document.getElementById('staffBio').value.trim()
-  };
-  const idx=list.findIndex(x=>x.id===id);
-  if(idx>=0)list[idx]=item;else list.push(item);
-  saveStaff(list);
-  staffForm.reset();
-  document.getElementById('staffId').value='';
-  renderStaff();
+  if(!supabaseClient){showAdminMessage('SUPABASE IS NOT CONFIGURED YET.');return}
+  showAdminMessage('AUTHENTICATING...');
+  const email=document.getElementById('adminEmail').value.trim();
+  const password=document.getElementById('adminPassword').value;
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error){showAdminMessage('ACCESS DENIED // INVALID LOGIN');return}
+  const admin=await isAdmin(data.user);
+  if(!admin){
+    await supabaseClient.auth.signOut();
+    showAdminMessage('ACCESS DENIED // NOT AN AUTHORIZED ADMIN');
+    return;
+  }
+  currentUser=data.user;currentIsAdmin=true;
+  closeAdminLogin();
+  staffModal.classList.add('open');staffModal.setAttribute('aria-hidden','false');
+  await refreshStaff();
 });
 
-function editStaff(id){
-  const p=loadStaff().find(x=>x.id===id);if(!p)return;
+document.querySelectorAll('[data-close-staff]').forEach(x=>x.addEventListener('click',()=>{staffModal.classList.remove('open');staffModal.setAttribute('aria-hidden','true')}));
+
+async function saveStaffToBackend(item){
+  if(!supabaseClient||!currentIsAdmin)throw new Error('ADMIN_REQUIRED');
+  const {error}=await supabaseClient.from('staff').upsert(item);
+  if(error)throw error;
+}
+async function deleteStaff(id){
+  if(!currentIsAdmin)return;
+  if(!confirm('Remove this staff member?'))return;
+  const {error}=await supabaseClient.from('staff').delete().eq('id',id);
+  if(error){alert('Delete failed.');return}
+  await refreshStaff();
+}
+async function editStaff(id){
+  if(!currentIsAdmin)return;
+  const staff=await loadStaff();const p=staff.find(x=>x.id===id);if(!p)return;
   document.getElementById('staffId').value=p.id;
-  document.getElementById('staffImage').value=p.image?.startsWith('data:')?'':(p.image||'');
+  document.getElementById('staffImage').value=p.image||'';
   document.getElementById('staffRole').value=p.role||'Staff';
   document.getElementById('staffName').value=p.name||'';
   document.getElementById('staffDiscord').value=p.discord||'';
   document.getElementById('staffBio').value=p.bio||'';
   document.querySelector('.staff-manager')?.scrollTo({top:0,behavior:'smooth'});
 }
-function deleteStaff(id){
-  if(!confirm('Remove this staff member?'))return;
-  saveStaff(loadStaff().filter(x=>x.id!==id));renderStaff();
+
+document.getElementById('clearStaffForm')?.addEventListener('click',()=>{
+  document.getElementById('staffForm')?.reset();
+  document.getElementById('staffId').value='';
+});
+
+document.getElementById('staffImageFile')?.addEventListener('change',e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  // For the starter build, use a local data URL. For production, upload this file to Supabase Storage.
+  const reader=new FileReader();reader.onload=()=>document.getElementById('staffImage').value=reader.result;reader.readAsDataURL(file);
+});
+
+document.getElementById('staffForm')?.addEventListener('submit',async e=>{
+  e.preventDefault();if(!currentIsAdmin)return;
+  const role=document.getElementById('staffRole').value;
+  const item={
+    id:document.getElementById('staffId').value||crypto.randomUUID(),
+    image:document.getElementById('staffImage').value.trim(),
+    role,
+    name:document.getElementById('staffName').value.trim(),
+    discord:document.getElementById('staffDiscord').value.trim(),
+    bio:document.getElementById('staffBio').value.trim(),
+    sort_order:staffRoleOrder[role]??99
+  };
+  try{
+    await saveStaffToBackend(item);
+    e.target.reset();document.getElementById('staffId').value='';
+    await refreshStaff();
+  }catch(err){alert('Could not save staff member. Check Supabase/RLS configuration.')}
+});
+
+async function initAdmin(){
+  if(supabaseClient){
+    const {data}=await supabaseClient.auth.getSession();
+    currentUser=data.session?.user||null;
+    currentIsAdmin=await isAdmin(currentUser);
+    supabaseClient.auth.onAuthStateChange(async(_event,session)=>{
+      currentUser=session?.user||null;
+      currentIsAdmin=await isAdmin(currentUser);
+      await refreshStaff();
+    });
+  }
+  await refreshStaff();
 }
-renderStaff();
+initAdmin();

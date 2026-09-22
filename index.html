@@ -121,7 +121,7 @@ WELCOME, USER_01.</pre>
       <span class="terminal-label">STAFF_DIRECTORY // ONLINE</span>
       <p>Add team members, assign a role and the directory automatically sorts everyone by hierarchy.</p>
     </div>
-    <button class="btn primary" id="openStaffManager" type="button">MANAGE STAFF ↗</button>
+    <button class="btn primary" id="openAdminLogin" type="button">ADMIN ACCESS ↗</button>
   </div>
   <div id="staffGrid" class="staff-grid" aria-live="polite"></div>
   <div id="staffEmpty" class="staff-empty" hidden>
@@ -129,6 +129,23 @@ WELCOME, USER_01.</pre>
     <small>Add your first staff member through STAFF MANAGEMENT.</small>
   </div>
 </section>
+
+
+<div id="adminLoginModal" class="staff-modal" aria-hidden="true">
+  <div class="staff-modal-backdrop" data-close-admin></div>
+  <div class="admin-login">
+    <button class="modal-close" data-close-admin aria-label="Close">×</button>
+    <span class="terminal-label">LEVEL_OS // SECURE_GATE</span>
+    <h3>ADMIN ACCESS</h3>
+    <p>Staff management is restricted to authorized The LƎVE⅃ administrators.</p>
+    <form id="adminLoginForm">
+      <label>EMAIL<input id="adminEmail" type="email" autocomplete="email" required></label>
+      <label>PASSWORD<input id="adminPassword" type="password" autocomplete="current-password" required></label>
+      <button class="btn primary" type="submit">AUTHENTICATE ↗</button>
+      <div id="adminLoginMessage" class="admin-message"></div>
+    </form>
+  </div>
+</div>
 
 <div id="staffModal" class="staff-modal" aria-hidden="true">
   <div class="staff-modal-backdrop" data-close-staff></div>
@@ -195,6 +212,6 @@ WELCOME, USER_01.</pre>
   <div>LIGHT • RAIDEN • EMPYREUM W2/P60</div>
   <div>© 2026 THE LƎVE⅃</div>
 </footer>
-<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js"></script>
 </body>
 </html>

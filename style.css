@@ -47,3 +47,12 @@
 @media(max-width:1000px){.staff-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.staff-toolbar{display:block}.staff-toolbar .btn{margin-top:18px}.staff-form{grid-template-columns:1fr}.staff-form .full{grid-column:auto}.manager-row{grid-template-columns:48px 1fr}.manager-actions{grid-column:2}.staff-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.staff-grid{grid-template-columns:1fr}.staff-manager{padding:18px}.manager-row{grid-template-columns:48px 1fr}.manager-actions{grid-column:2}}
+
+.admin-login{position:relative;width:min(460px,94vw);background:#08050d;border:1px solid rgba(255,43,214,.55);box-shadow:0 0 80px rgba(255,43,214,.18);padding:35px}
+.admin-login h3{font:400 28px Audiowide;margin:15px 0 10px}
+.admin-login p{color:var(--muted);font-size:15px;line-height:1.5}
+.admin-login form{display:grid;gap:15px;margin-top:25px}
+.admin-login label{font:400 9px Audiowide;color:var(--cyan);letter-spacing:1px}
+.admin-login input{width:100%;margin-top:8px;background:#030207;color:#fff;border:1px solid rgba(36,232,255,.2);padding:13px;font:400 14px Rajdhani,Arial,sans-serif}
+.admin-message{min-height:20px;color:#ff6688;font:400 10px Audiowide;letter-spacing:.5px}
+.admin-session{display:flex;align-items:center;gap:10px;margin-top:20px;font:400 9px Audiowide;color:#43ffb2}
