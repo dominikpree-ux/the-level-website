@@ -17,8 +17,8 @@ hero.addEventListener('pointermove',e=>{
 const STAFF_STORAGE_KEY = 'the_level_staff_v1'; // legacy fallback only
 const staffRoleOrder = {
   'Owner': 1, 'Co-Owner': 2, 'Management': 3, 'Manager': 4, 'Event Manager': 5,
-  'DJ': 6, 'Bartender': 7, 'Hostess': 8, 'Dancer': 9, 'Security': 10,
-  'Photographer': 11, 'Staff': 12
+  'DJ': 6, 'Escort': 7, 'Bartender': 8, 'Hostess': 9, 'Dancer': 10, 'Security': 11,
+  'Photographer': 12, 'Shouter': 13, 'Staff': 14
 };
 
 const supabaseClient = window.supabase && window.THE_LEVEL_SUPABASE_CONFIG?.url && window.THE_LEVEL_SUPABASE_CONFIG?.anonKey
